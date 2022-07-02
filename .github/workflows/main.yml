@@ -2,7 +2,7 @@ name: Build addons
 
 # Controls when the workflow will run
 on:
-  # When a release is created
+  # When a release is published
   release:
     types: [published]
 
@@ -33,6 +33,7 @@ jobs:
         with:
           name: Addon packages
           path: ./*.addon
+          retention-days: 1
 
       # Publish a release if is a tag
       - name: Release
