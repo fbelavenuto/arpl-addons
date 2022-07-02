@@ -31,7 +31,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
-          name: Upload addon packages
+          name: Addon packages
           path: ./*.addon
 
       # Publish a release if is a tag
