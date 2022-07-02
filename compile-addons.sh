@@ -3,14 +3,7 @@
 set -e
 
 TMP_PATH="/tmp"
-DEST_PATH="../files/board/arpl/p3/addons"
-
-###############################################################################
-function trap_cancel() {
-    echo "Press Control+C once more terminate the process (or wait 2s for it to restart)"
-    sleep 2 || exit 1
-}
-trap trap_cancel SIGINT SIGTERM
+YQ_BIN="`dirname $0`/yq"
 
 ###############################################################################
 function die() {
@@ -22,7 +15,7 @@ function die() {
 #
 # 1 - Path of key
 function hasConfigKey() {
-  [ "`yq eval '.'${1}' | has("'${2}'")' "${3}"`" == "true" ] && return 0 || return 1
+  [ "`${YQ_BIN} eval '.'${1}' | has("'${2}'")' "${3}"`" == "true" ] && return 0 || return 1
 }
 
 ###############################################################################
@@ -31,7 +24,7 @@ function hasConfigKey() {
 # 2 - Path of yaml config file
 # Return Value
 function readConfigKey() {
-  RESULT=`yq eval '.'${1}' | explode(.)' "${2}"`
+  RESULT=`${YQ_BIN} eval '.'${1}' | explode(.)' "${2}"`
   [ "${RESULT}" == "null" ] && echo "" || echo ${RESULT}
 }
 
@@ -41,7 +34,7 @@ function readConfigKey() {
 # 2 - Path of yaml config file
 # Returns map of values
 function readConfigMap() {
-  yq eval '.'${1}' | explode(.) | to_entries | map([.key, .value] | join("=")) | .[]' "${2}"
+  ${YQ_BIN} eval '.'${1}' | explode(.) | to_entries | map([.key, .value] | join("=")) | .[]' "${2}"
 }
 
 ###############################################################################
@@ -50,7 +43,7 @@ function readConfigMap() {
 # 2 - Path of yaml config file
 # Returns array/map of values
 function readConfigArray() {
-  yq eval '.'${1} "${2}"
+  ${YQ_BIN} eval '.'${1} "${2}"
 }
 
 ###############################################################################
@@ -59,7 +52,7 @@ function readConfigArray() {
 # 2 - Path of yaml config file
 # Returns array of values
 function readConfigEntriesArray() {
-  yq eval '.'${1}' | explode(.) | to_entries | map([.key])[] | .[]' "${2}"
+  ${YQ_BIN} eval '.'${1}' | explode(.) | to_entries | map([.key])[] | .[]' "${2}"
 }
 
 
@@ -166,10 +159,7 @@ function compile-addon() {
     # Clean
     rm -rf "${OUT_PATH}/${P}"
   done
-  # Update files for image
-  rm -rf "${DEST_PATH}/${1}"
-  mkdir -p "${DEST_PATH}/${1}"
-  cp "${OUT_PATH}/"* "${DEST_PATH}/${1}/"
+  # Create addon package
   tar caf "${1}.addon" -C "${OUT_PATH}" .
 }
 
