@@ -25,6 +25,7 @@ jobs:
       - name: Build addon packages
         run: |
           ./compile-addons.sh
+          zip -9 addons.zip -j *.addons
 
       # Upload img
       - name: Upload
@@ -38,4 +39,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: *.addon
+          files: |
+            *.addon
+            addons.zip
