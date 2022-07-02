@@ -146,7 +146,7 @@ function compile-addon() {
       KVER="`echo ${P} | cut -d'-' -f2`"
       # Compile using docker
       docker run --rm -t --user `id -u` -v "${TMP_PATH}":/output \
-        -v "${PWD}/${1}/src/${KVER}":/input syno-compiler compile-module ${PLATFORM}
+        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-compiler compile-module ${PLATFORM}
       mkdir -p "${OUT_PATH}/${P}/root/modules"
       mv "${TMP_PATH}/"*.ko "${OUT_PATH}/${P}/root/modules/"
       HAS_FILES=1
