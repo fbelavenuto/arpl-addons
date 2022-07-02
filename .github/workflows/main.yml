@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Upload addon packages
-          path: *.addon
+          path: ./*.addon
 
       # Publish a release if is a tag
       - name: Release
