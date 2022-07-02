@@ -6,12 +6,6 @@ TMP_PATH="/tmp"
 YQ_BIN="`dirname $0`/yq"
 
 ###############################################################################
-function die() {
-  echo -e "\033[1;31m$@\033[0m"
-  exit 1
-}
-
-###############################################################################
 #
 # 1 - Path of key
 function hasConfigKey() {
@@ -59,13 +53,17 @@ function readConfigEntriesArray() {
 ###############################################################################
 function compile-addon() {
   MANIFEST="${1}/manifest.yml"
-  [ ! -f "${MANIFEST}" ] && die "${MANIFEST} not found"
+  if [ ! -f "${MANIFEST}" ]; then
+    echo -e "\033[1;43mWarning: ${MANIFEST} not found, ignoring it\033[0m"
+  fi
   echo -e "\033[7mProcessing manifest ${MANIFEST}\033[0m"
   OUT_PATH="${TMP_PATH}/${1}"
   rm -rf "${OUT_PATH}"
   mkdir -p "${OUT_PATH}"
   VER=`readConfigKey "version" "${MANIFEST}"`
-  [ ${VER} -ne 1 ] && die "Error, version ${VER} of manifest not suported"
+  if [ ${VER} -ne 1 ]; then
+    echo "\033[1;43mWarning: version ${VER} of manifest not suported, ignoring it\033[0m"
+  fi
   cp "${MANIFEST}" "${OUT_PATH}"
   # Check if exist files for all platforms
   if hasConfigKey "" "all" "${MANIFEST}"; then
@@ -171,7 +169,7 @@ if [ $# -ge 1 ]; then
 else
   while read D; do
     DRIVER=`basename ${D}`
-    [ "${DRIVER}" = "." ] && continue
+    [ "${DRIVER:0:1}" = "." ] && continue
     compile-addon ${DRIVER}
   done < <(find -maxdepth 1 -type d)
 fi
