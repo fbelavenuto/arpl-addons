@@ -1,3 +1,5 @@
+*.addon
+
 # Prerequisites
 *.d
 
