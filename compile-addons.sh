@@ -52,6 +52,7 @@ function readConfigEntriesArray() {
 
 ###############################################################################
 function compile-addon() {
+  # Read manifest file
   MANIFEST="${1}/manifest.yml"
   if [ ! -f "${MANIFEST}" ]; then
     echo -e "\033[1;43mWarning: ${MANIFEST} not found, ignoring it\033[0m"
@@ -61,20 +62,22 @@ function compile-addon() {
   rm -rf "${OUT_PATH}"
   mkdir -p "${OUT_PATH}"
   VER=`readConfigKey "version" "${MANIFEST}"`
+  # Check manifest version
   if [ ${VER} -ne 1 ]; then
     echo "\033[1;43mWarning: version ${VER} of manifest not suported, ignoring it\033[0m"
   fi
+  # Copy manifest to destiny
   cp "${MANIFEST}" "${OUT_PATH}"
   # Check if exist files for all platforms
   if hasConfigKey "" "all" "${MANIFEST}"; then
     echo -e "\033[1;32m Processing 'all' section\033[0m"
-    mkdir -p "${OUT_PATH}/all/root"
     HAS_FILES=0
     # Get name of script to install, if defined. This script has low priority
     INSTALL_SCRIPT="`readConfigKey "all.install-script" "${MANIFEST}"`"
     if [ -n "${INSTALL_SCRIPT}" ]; then
       if [ -f "${1}/${INSTALL_SCRIPT}" ]; then
         echo -e "\033[1;35m  Copying install script ${INSTALL_SCRIPT}\033[0m"
+        mkdir -p "${OUT_PATH}/all"
         cp "${1}/${INSTALL_SCRIPT}" "${OUT_PATH}/all/install.sh"
         HAS_FILES=1
       else
@@ -87,6 +90,7 @@ function compile-addon() {
     if [ -n "${COPY_PATH}" ]; then
       if [ -d "${1}/${COPY_PATH}" ]; then
         echo -e "\033[1;35m  Copying folder '${COPY_PATH}'\033[0m"
+        mkdir -p "${OUT_PATH}/all/root"
         cp -R "${1}/${COPY_PATH}/"* "${OUT_PATH}/all/root"
         HAS_FILES=1
       else
@@ -101,23 +105,24 @@ function compile-addon() {
     # Clean
     rm -rf "${OUT_PATH}/all"
   fi
+
+  # Now check files for individual models
   unset AVAL_FOR
   declare -a AVAL_FOR
   for P in `readConfigEntriesArray "available-for" "${MANIFEST}"`; do
     AVAL_FOR+=(${P})
   done
-  [ ${#AVAL_FOR} -eq 0 ] && return
 
-    # Loop in each available platform-kver
+  # Loop in each available platform-kver
   for P in ${AVAL_FOR[@]}; do
     echo -e "\033[1;32m Processing '${P}' platform-kver section\033[0m"
-    mkdir -p "${OUT_PATH}/${P}/root"
     HAS_FILES=0
     # Get name of script to install, if defined. This script has high priority
     INSTALL_SCRIPT="`readConfigKey 'available-for."'${P}'".install-script' "${MANIFEST}"`"
     if [ -n "${INSTALL_SCRIPT}" ]; then
       if [ -f "${1}/${INSTALL_SCRIPT}" ]; then
         echo -e "\033[1;35m  Copying install script ${INSTALL_SCRIPT}\033[0m"
+        mkdir -p "${OUT_PATH}/${P}"
         cp "${1}/${INSTALL_SCRIPT}" "${OUT_PATH}/${P}/install.sh"
         HAS_FILES=1
       else
@@ -130,6 +135,7 @@ function compile-addon() {
     if [ -n "${COPY_PATH}" ]; then
       if [ -d "${1}/${COPY_PATH}" ]; then
         echo -e "\033[1;35m  Copying folder '${COPY_PATH}'\033[0m"
+        mkdir -p "${OUT_PATH}/${P}/root"
         cp -R "${1}/${COPY_PATH}/"* "${OUT_PATH}/${P}/root"
         HAS_FILES=1
       else
