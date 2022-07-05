@@ -1,2 +1,3 @@
-# arpl-addons
-arpl project addon repository
+# Repository for ARPL Addons
+
+Please use releases page to get addon URL
