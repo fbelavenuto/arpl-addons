@@ -1,5 +1,7 @@
-if [ "${1}" = "rd" ]; then
-  echo "Checking for VirtIO..."
+#!/usr/bin/env ash
+
+if [ "${1}" = "modules" ]; then
+  echo "Installing module for VirtIO..."
   if (grep -r -q -E "(QEMU|VirtualBox)" /sys/devices/virtual/dmi/id/); then
     echo "VirtIO hypervisor detected!"
     ${INSMOD} "/modules/virtio.ko" ${PARAMS}

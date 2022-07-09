@@ -1,5 +1,7 @@
-if [ "${1}" = "rd" ]; then
-  echo "Jumkey's qjs-dtb arpl version - ramdisk time"
+#!/usr/bin/env ash
+
+if [ "${1}" = "early" ]; then
+  echo "Jumkey's qjs-dtb arpl version - early"
   # fix executable flag
   chmod +x /usr/sbin/dtc
   chmod +x /usr/sbin/qjs
@@ -20,8 +22,8 @@ if [ "${1}" = "rd" ]; then
     cp -vf model_${PLATFORM_ID%%_*}.dtb /etc.defaults/model.dtb
     cp -vf model_${PLATFORM_ID%%_*}.dtb /var/run/model.dtb
   fi
-else
-  echo "Jumkey's qjs-dtb arpl version - sys time"
+elif [ "${1}" = "late" ]; then
+  echo "Jumkey's qjs-dtb arpl version - late"
   # copy file
   cp -vf /etc.defaults/model.dtb /tmpRoot/etc.defaults/model.dtb
 fi
