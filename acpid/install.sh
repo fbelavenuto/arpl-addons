@@ -1,6 +1,9 @@
-if [ "${1}" = "rd" ]; then
+#!/usr/bin/env ash
+
+if [ "${1}" = "modules" ]; then
+  echo "Installing module for ACPI button"
   ${INSMOD} /modules/button.ko ${PARAMS}
-else
+elif [ "${1}" = "late" ]; then
   echo "Installing daemon for ACPI button"
   tar -zxvf /addons/acpid.tgz -C /tmpRoot/
   chmod 755 /tmpRoot/usr/sbin/acpid

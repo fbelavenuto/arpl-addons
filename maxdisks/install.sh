@@ -1,3 +1,9 @@
+#!/usr/bin/env ash
+
+if [ "${1}" = "modules" ]; then
+  return
+fi
+
 # Get values in .conf K=V file
 # 1 - key
 # 2 - file
@@ -20,7 +26,7 @@ _set_conf_kv() {
 }
 
 echo "Adjust maxdisks and internalportcfg automatically"
-if [ "${1}" = "rd" ]; then
+if [ "${1}" = "early" ]; then
   # sysfs is populated here
   NUMPORTS=`ls /sys/class/scsi_host | wc -w`
   # Max supported disks is 26
@@ -30,7 +36,7 @@ if [ "${1}" = "rd" ]; then
   _set_conf_kv "maxdisks" "${NUMPORTS}" "/etc.defaults/synoinfo.conf"
   _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc/synoinfo.conf"
   _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc.defaults/synoinfo.conf"
-else
+elif [ "${1}" = "late" ]; then
   # sysfs is unpopulated here, get the values from ramdisk synoinfo.conf
   NUMPORTS=`_get_conf_kv maxdisks /etc/synoinfo.conf`
   INTPORTCFG=`_get_conf_kv internalportcfg /etc/synoinfo.conf`

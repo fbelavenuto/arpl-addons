@@ -1,7 +1,9 @@
-if [ "${1}" = "sys" ]; then
-  echo "Script for fixing missing HW features dependencies"
+#!/usr/bin/env ash
 
-  SED_PATH='/tmpRoot/usr/bin/sed'
+SED_PATH='/tmpRoot/usr/bin/sed'
+
+if [ "${1}" = "late" ]; then
+  echo "Script for fixing missing HW features dependencies"
 
   # CPU performance scaling
   if [ -f /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf ]; then
