@@ -150,14 +150,14 @@ class Node {
 std::vector<uint64_t> resMem;
 std::map<std::string, int> strings;
 Node *rootNode;
-int led=0, internal_slot=0, nvme_slot=0;
+int led=0, internal_slot=1, nvme_slot=1;
 
 /*****************************************************************************/
 uint32_t changeEndian(uint32_t num) {
     return ((num>>24)&0xff)       | // move byte 3 to byte 0
            ((num<<8)&0xff0000)    | // move byte 1 to byte 2
            ((num>>8)&0xff00)      | // move byte 2 to byte 1
-           ((num<<24)&0xff000000);  // byte 0 to byte 3
+           ((num<<24)&0xff000000);  // move byte 0 to byte 3
 }
 
 /*****************************************************************************/
