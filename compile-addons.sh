@@ -158,10 +158,13 @@ function compile-addon() {
       PLATFORM="`echo ${P} | cut -d'-' -f1`"
       KVER="`echo ${P} | cut -d'-' -f2`"
       # Compile using docker
-      docker run --rm -t --user `id -u` -v "${TMP_PATH}":/output \
+      rm -rf "${TMP_PATH}/${1}-mods"
+      mkdir -p "${TMP_PATH}/${1}-mods"
+      docker run --rm -t --user `id -u` -v "${TMP_PATH}/${1}-mods":/output \
         -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-compiler compile-module ${PLATFORM}
       mkdir -p "${OUT_PATH}/${P}/root/modules"
-      mv "${TMP_PATH}/"*.ko "${OUT_PATH}/${P}/root/modules/"
+      mv "${TMP_PATH}/${1}-mods/"*.ko "${OUT_PATH}/${P}/root/modules/"
+      rm -rf "${TMP_PATH}/${1}-mods"
       HAS_FILES=1
     fi
     if [ ${HAS_FILES} -eq 1 ]; then
@@ -174,6 +177,7 @@ function compile-addon() {
   done
   # Create addon package
   tar caf "${1}.addon" -C "${OUT_PATH}" .
+  rm -rf "${OUT_PATH}"
 }
 
 # Main
@@ -185,6 +189,7 @@ else
   while read D; do
     DRIVER=`basename ${D}`
     [ "${DRIVER:0:1}" = "." ] && continue
-    compile-addon ${DRIVER}
+    compile-addon ${DRIVER} &
   done < <(find -maxdepth 1 -type d)
 fi
+wait
