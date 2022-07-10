@@ -53,18 +53,16 @@ struct fdt_header {
 class Property {
     private:
         std::string name;
-        char* value;
+        char value[1024];
         int size;
     public:
         Property(char* name, char* valuePtr, int valueSize) {
             this->name = name;
-            this->value = new char(valueSize);
             this->size = valueSize;
             memcpy(this->value, valuePtr, valueSize);
         }
         Property(const Property& p) {
             this->name = p.name;
-            this->value = new char(p.size+1);
             this->size = p.size;
             memcpy(this->value, p.value, p.size);
         }
@@ -74,9 +72,6 @@ class Property {
                 new (this) Property(p);
             }
             return *this;
-        }
-        ~Property() {
-            delete this->value;
         }
         std::string getName() {
             return this->name;
@@ -88,8 +83,6 @@ class Property {
             return this->size;
         }
         void setValue(const char* valuePtr, int valueSize) {
-            delete this->value;
-            this->value = new char(valueSize);
             this->size = valueSize;
             memcpy(this->value, valuePtr, valueSize);
         }
@@ -209,7 +202,7 @@ int parseDtb(char* fileName) {
     file.read(strBlock, sizeString);
     
     uint32_t t, cnt=0, nameSize, propSize, propOff;
-    char c, *pc;
+    char c, pc[1024];
     bool loop = true, flag;
     file.seekg(offsetStruct);
     Node *lastNode;
@@ -242,33 +235,31 @@ int parseDtb(char* fileName) {
 
             // End node
             case FDT_END_NODE:
-              // Remove last node from vector
-              rootNode = nodes.back();
-              nodes.pop_back();
-              // If not root node
-              if (nodes.size() > 0) {
-                lastNode = nodes.back();
-                lastNode->addNode(rootNode);
-              }
-              break;
+                // Remove last node from vector
+                rootNode = nodes.back();
+                nodes.pop_back();
+                // If not root node
+                if (nodes.size() > 0) {
+                    lastNode = nodes.back();
+                    lastNode->addNode(rootNode);
+                }
+                break;
 
             // Property
             case FDT_PROP:
-              file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
-              propSize = changeEndian(t);   // size of value
-              file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
-              propOff = changeEndian(t);    // strings offset
-              // Alignment
-              t = propSize;
-              if ((t % 4) != 0) {
-                t += (4 - (t % 4));
-              }
-              pc = new char(t);
-              // read value
-              file.read(pc, t);
-              rootNode->addProperty(new Property((strBlock + propOff), pc, propSize));
-              delete pc;
-              break;
+                file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
+                propSize = changeEndian(t);   // size of value
+                file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
+                propOff = changeEndian(t);    // strings offset
+                // Alignment
+                t = propSize;
+                if ((t % 4) != 0) {
+                    t += (4 - (t % 4));
+                }
+                // read value
+                file.read(pc, t);
+                rootNode->addProperty(new Property((strBlock + propOff), pc, propSize));
+                break;
 
             // Nop, ignore
             case FDT_NOP:
@@ -456,12 +447,11 @@ void changeNvmeNode(Node* node, const char* root) {
 /*****************************************************************************/
 int main(int argc, char **argv) {
     if (argc < 3) {
-        std::cerr << "Use: dtbpatch <model.dtb> <modet_patched.dtb> <x>" << std::endl;
+        std::cerr << "Use: dtbpatch <model.dtb> <model_patched.dtb>" << std::endl;
         return 1;
     }
     int r=parseDtb(argv[1]);
     if (r) return r;
-
     // patch nodes
     std::string s;
     Node* internal1 = NULL; // copy from first internal_slot node
@@ -475,13 +465,11 @@ int main(int argc, char **argv) {
             if (NULL == internal1) {
                 internal1 = new Node(*(*it));           // copy it
             }
-            delete *it;                                 // free memory
             it = rootNode->eraseChildNode(it);          // remove it
         } else if (s.find("nvme_slot") != std::string::npos) {
             if (NULL == nvme1) {
                 nvme1 = new Node(*(*it));               // copy it
             }
-            delete *it;                                 // free memory
             it = rootNode->eraseChildNode(it);          // remove it
         } else {
             ++it;
@@ -491,6 +479,7 @@ int main(int argc, char **argv) {
     std::string pciepath;
     uint32_t ata_port_no=0;
     char buffer[1024];
+
     while (internal1) {
         s = "/sys/block/sata" + std::to_string(c++) + "/device/syno_block_info";
         std::ifstream inFile(s);
@@ -538,7 +527,6 @@ int main(int argc, char **argv) {
         rootNode->addNode(nnode);
         inFile.close();
     }
-
     // remount
     r=remountDtb(argv[2]);
     return r;
