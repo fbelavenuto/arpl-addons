@@ -66,6 +66,15 @@ function compile-addon() {
   if [ ${VER} -ne 1 ]; then
     echo "\033[1;43mWarning: version ${VER} of manifest not suported, ignoring it\033[0m"
   fi
+  # Check if has compile script
+  COMPILESCRIPT=`readConfigKey "compile-script" "${MANIFEST}"`
+  if [ -n "${COMPILESCRIPT}" ]; then
+    echo "Running compile script"
+    pushd . >/dev/null
+    cd "${1}"
+    ./${COMPILESCRIPT}
+    popd >/dev/null
+  fi
   # Copy manifest to destiny
   cp "${MANIFEST}" "${OUT_PATH}"
   # Check if exist files for all platforms
