@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "modules" ]; then
+if [ "${1}" = "early" ]; then
   echo "Installing module for ACPI button"
   ${INSMOD} /modules/button.ko ${PARAMS}
 elif [ "${1}" = "late" ]; then

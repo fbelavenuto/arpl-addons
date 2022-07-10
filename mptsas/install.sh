@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "modules" ]; then
+if [ "${1}" = "early" ]; then
   echo "Installing module for Fusion MPT ScsiHost for SAS"
   ${INSMOD} "/modules/scsi_transport_sas.ko"
   ${INSMOD} "/modules/mptbase.ko"

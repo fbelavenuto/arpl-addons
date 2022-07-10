@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "modules" ]; then
+if [ "${1}" = "early" ]; then
   echo "Installing module for VirtIO..."
   if (grep -r -q -E "(QEMU|VirtualBox)" /sys/devices/virtual/dmi/id/); then
     echo "VirtIO hypervisor detected!"
