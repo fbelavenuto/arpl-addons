@@ -427,6 +427,17 @@ void changeInternalNode(Node* node, const char* root, uint32_t port) {
                     it2->setValue(s.c_str(), s.size()+1);
                 }
             }
+        } else if (s.compare("mv14xx") == 0) {
+            std::list<Property*> propsAhci = it->getProperties();
+            for (auto &it2: propsAhci) {
+                s = it2->getName();
+                if (s.compare("pcie_root") == 0) {
+                    it2->setValue(root, strlen(root)+1);
+                } else if (s.compare("phy") == 0) {
+                    uint32_t v = changeEndian(port);
+                    it2->setValue(reinterpret_cast<const char*>(&v), 4);
+                }
+            }
         }
     }
 }
