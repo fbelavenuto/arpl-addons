@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "jrExit" ]; then
+if [ "${1}" = "early" ]; then
   echo "Starting eudev daemon"
   [ -e /proc/sys/kernel/hotplug ] && printf '\000\000\000\000' > /proc/sys/kernel/hotplug
   /sbin/udevd -d || { echo "FAIL"; exit 1; }

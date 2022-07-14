@@ -1,26 +1,14 @@
 version: 1
 name: acpid
-system: true
 description: "Flexible and extensible daemon for delivering ACPI events"
+all:
+  install-script: "install.sh"
+  copy: "all"
 available-for:
   bromolow-3.10.108:
-    install-script: "install.sh"
-    copy: "all"
   apollolake-4.4.180:
-    install-script: "install.sh"
-    copy: "all"
   broadwell-4.4.180:
-    install-script: "install.sh"
-    copy: "all"
   broadwellnk-4.4.180:
-    install-script: "install.sh"
-    copy: "all"
   denverton-4.4.180:
-    install-script: "install.sh"
-    copy: "all"
   geminilake-4.4.180:
-    install-script: "install.sh"
-    copy: "all"
   v1000-4.4.180:
-    install-script: "install.sh"
-    copy: "all"

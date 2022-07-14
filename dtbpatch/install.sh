@@ -1,7 +1,7 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "early" ]; then
-  echo "dtbpatch - early"
+if [ "${1}" = "patches" ]; then
+  echo "dtbpatch"
   # fix executable flag
   chmod +x /usr/sbin/dtbpatch
 
@@ -14,7 +14,7 @@ if [ "${1}" = "early" ]; then
     cp -vf output.dtb /var/run/model.dtb
   fi
 elif [ "${1}" = "late" ]; then
-  echo "dtbpatch - late"
+  echo "dtbpatch"
   # copy file
   cp -vf /etc.defaults/model.dtb /tmpRoot/etc.defaults/model.dtb
 fi
