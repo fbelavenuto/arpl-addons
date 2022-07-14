@@ -1,6 +1,0 @@
-#!/usr/bin/env ash
-
-if [ "${1}" = "early" ]; then
-  echo "Installing module for VMware PVSCSI adapter"
-  ${INSMOD} "/modules/vmw_pvscsi.ko" ${PARAMS}
-fi
