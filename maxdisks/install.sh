@@ -23,21 +23,19 @@ _set_conf_kv() {
 
 if [ "${1}" = "patches" ]; then
   echo "Adjust maxdisks and internalportcfg automatically"
-  NUMPORTS=`_get_conf_kv maxdisks /etc/synoinfo.conf`
-  INTPORTCFG=`_get_conf_kv internalportcfg /etc/synoinfo.conf`
-  if [ -z "${NUMPORTS}" ]; then
+  if [ -z "${2}" ]; then
     # sysfs is populated here
     NUMPORTS=`ls /sys/class/scsi_host | wc -w`
-    # Max supported disks is 26
-    [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
-    _set_conf_kv "maxdisks" "${NUMPORTS}" "/etc/synoinfo.conf"
-    _set_conf_kv "maxdisks" "${NUMPORTS}" "/etc.defaults/synoinfo.conf"
+  else
+    NUMPORTS="${2}"
   fi
-  if [ -z "${INTPORTCFG}" ]; then
-    INTPORTCFG="0x`printf "%x" "$((2**${NUMPORTS}-1))"`"
-    _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc/synoinfo.conf"
-    _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc.defaults/synoinfo.conf"
-  fi
+  # Max supported disks is 26
+  [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
+  _set_conf_kv "maxdisks" "${NUMPORTS}" "/etc/synoinfo.conf"
+  _set_conf_kv "maxdisks" "${NUMPORTS}" "/etc.defaults/synoinfo.conf"
+  INTPORTCFG="0x`printf "%x" "$((2**${NUMPORTS}-1))"`"
+  _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc/synoinfo.conf"
+  _set_conf_kv "internalportcfg" "${INTPORTCFG}" "/etc.defaults/synoinfo.conf"
   # log
   echo "maxdisks=${NUMPORTS}"
   echo "internalportcfg=${INTPORTCFG}"
