@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "early" ]; then
+if [ "${1}" = "patches" ]; then
   echo "dtbpatch - early"
   # fix executable flag
   chmod +x /usr/sbin/dtbpatch

@@ -1,8 +1,7 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "modules" ]; then
-  return
-fi
+[ "${1}" = "early" ] && exit 0
+[ "${1}" = "modules" ] && exit 0
 
 # Get values in .conf K=V file
 # 1 - key
@@ -26,7 +25,7 @@ _set_conf_kv() {
 }
 
 echo "Adjust maxdisks and internalportcfg automatically"
-if [ "${1}" = "early" ]; then
+if [ "${1}" = "patches" ]; then
   # sysfs is populated here
   NUMPORTS=`ls /sys/class/scsi_host | wc -w`
   # Max supported disks is 26
