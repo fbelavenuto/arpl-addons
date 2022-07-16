@@ -189,7 +189,7 @@ else
   while read D; do
     DRIVER=`basename ${D}`
     [ "${DRIVER:0:1}" = "." ] && continue
-    compile-addon ${DRIVER} &
+    compile-addon ${DRIVER}
   done < <(find -maxdepth 1 -type d)
 fi
 wait
