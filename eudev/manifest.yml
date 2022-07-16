@@ -1,7 +1,7 @@
 version: 1
-name: dtbpatch
+name: eudev
 system: true
-description: "Patch model.dtb"
+description: "eudev project + kmod modified"
 compile-script: compile.sh
 all:
   install-script: "install.sh"

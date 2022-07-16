@@ -1,0 +1,90 @@
+diff --git a/libkmod/libkmod.c b/libkmod/libkmod.c
+index 7c2b889..de8d8fd 100644
+--- a/libkmod/libkmod.c
++++ b/libkmod/libkmod.c
+@@ -221,7 +221,7 @@ static char *get_kernel_release(const char *dirname)
+ 	if (uname(&u) < 0)
+ 		return NULL;
+ 
+-	if (asprintf(&p, "%s/%s", dirname_default_prefix, u.release) < 0)
++	if (asprintf(&p, "%s", dirname_default_prefix) < 0)
+ 		return NULL;
+ 
+ 	return p;
+diff --git a/tools/depmod.c b/tools/depmod.c
+index 364b7d4..d9f9566 100644
+--- a/tools/depmod.c
++++ b/tools/depmod.c
+@@ -906,7 +906,7 @@ struct vertex;
+ struct mod {
+ 	struct kmod_module *kmod;
+ 	char *path;
+-	const char *relpath; /* path relative to '$ROOT/lib/modules/$VER/' */
++	const char *relpath; /* path relative to '$ROOT/lib/modules' */
+ 	char *uncrelpath; /* same as relpath but ending in .ko */
+ 	struct kmod_list *info_list;
+ 	struct kmod_list *dep_sym_list;
+@@ -3008,8 +3008,8 @@ static int do_depmod(int argc, char *argv[])
+ 	}
+ 
+ 	cfg.dirnamelen = snprintf(cfg.dirname, PATH_MAX,
+-				  "%s/lib/modules/%s",
+-				  root == NULL ? "" : root, cfg.kversion);
++				  "%s/lib/modules",
++				  root == NULL ? "" : root);
+ 
+ 	if (optind == argc)
+ 		all = 1;
+diff --git a/tools/modinfo.c b/tools/modinfo.c
+index d0aab20..05b8fbe 100644
+--- a/tools/modinfo.c
++++ b/tools/modinfo.c
+@@ -462,8 +462,8 @@ static int do_modinfo(int argc, char *argv[])
+ 			}
+ 			kversion = u.release;
+ 		}
+-		snprintf(dirname_buf, sizeof(dirname_buf), "%s/lib/modules/%s",
+-			 root, kversion);
++		snprintf(dirname_buf, sizeof(dirname_buf), "%s/lib/modules",
++			 root);
+ 		dirname = dirname_buf;
+ 	}
+ 
+diff --git a/tools/modprobe.c b/tools/modprobe.c
+index 2a2ae21..6f9c99e 100644
+--- a/tools/modprobe.c
++++ b/tools/modprobe.c
+@@ -970,8 +970,7 @@ static int do_modprobe(int argc, char **orig_argv)
+ 			kversion = u.release;
+ 		}
+ 		snprintf(dirname_buf, sizeof(dirname_buf),
+-				"%s/lib/modules/%s", root,
+-				kversion);
++				"%s/lib/modules", root);
+ 		dirname = dirname_buf;
+ 	}
+ 
+diff --git a/tools/static-nodes.c b/tools/static-nodes.c
+index 8d2356d..6190e8d 100644
+--- a/tools/static-nodes.c
++++ b/tools/static-nodes.c
+@@ -212,16 +212,14 @@ static int do_static_nodes(int argc, char *argv[])
+ 		goto finish;
+ 	}
+ 
+-	snprintf(modules, sizeof(modules), "/lib/modules/%s/modules.devname", kernel.release);
++	snprintf(modules, sizeof(modules), "/lib/modules/modules.devname");
+ 	in = fopen(modules, "re");
+ 	if (in == NULL) {
+ 		if (errno == ENOENT) {
+-			fprintf(stderr, "Warning: /lib/modules/%s/modules.devname not found - ignoring\n",
+-				kernel.release);
++			fprintf(stderr, "Warning: /lib/modules/modules.devname not found - ignoring\n");
+ 			ret = EXIT_SUCCESS;
+ 		} else {
+-			fprintf(stderr, "Error: could not open /lib/modules/%s/modules.devname - %m\n",
+-				kernel.release);
++			fprintf(stderr, "Error: could not open /lib/modules/modules.devname - %m\n");
+ 			ret = EXIT_FAILURE;
+ 		}
+ 		goto finish;
