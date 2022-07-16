@@ -1,4 +1,5 @@
 *.addon
+eudev/all/*
 
 # Prerequisites
 *.d
