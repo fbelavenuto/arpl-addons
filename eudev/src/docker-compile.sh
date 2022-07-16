@@ -12,7 +12,7 @@ git clone --single-branch https://github.com/eudev-project/eudev.git /tmp/eudev
 cd /tmp/eudev
 git checkout v3.2.11
 ./autogen.sh
-./configure --prefix=/usr --sysconfdir=/etc --enable-static --disable-manpages --disable-selinux --disable-mtd_probe --enable-kmod
+./configure --prefix=/usr --sysconfdir=/etc --disable-manpages --disable-selinux --disable-mtd_probe --enable-kmod
 make all
 make DESTDIR=/output install
 rm -Rf /output/usr/share /output/usr/include /output/usr/lib/pkgconfig /output/usr/lib/libudev.*
