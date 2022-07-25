@@ -17,3 +17,4 @@ make all
 make DESTDIR=/output install
 rm -Rf /output/usr/share /output/usr/include /output/usr/lib/pkgconfig /output/usr/lib/libudev.*
 rm /output/usr/lib/udev/rules.d/80-net-name-slot.rules
+ln -sf /usr/bin/kmod /output/usr/sbin/depmod
