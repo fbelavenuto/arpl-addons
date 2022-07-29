@@ -1,0 +1,8 @@
+version: 1
+name: i915
+description: "Intel iGPU Drivers (10th Gen)"
+all:
+  install-script: "install.sh"
+  copy: "all"
+available-for:
+  geminilake-4.4.180:
