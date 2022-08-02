@@ -515,7 +515,7 @@ int main(int argc, char **argv) {
         rootNode->addNode(nnode);
         inFile.close();
     }
-    c = 1;
+    c = 0;
     while (nvme1) {
         s = "/sys/block/nvme" + std::to_string(c++) + "/device/syno_block_info";
         std::ifstream inFile(s);
