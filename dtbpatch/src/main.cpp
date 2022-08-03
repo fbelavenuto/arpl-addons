@@ -150,7 +150,7 @@ class Node {
 std::vector<uint64_t> resMem;
 std::map<std::string, int> strings;
 Node *rootNode;
-int led=0, internal_slot=1, nvme_slot=1;
+int led=0, internal_slot=1;
 
 /*****************************************************************************/
 uint32_t changeEndian(uint32_t num) {
@@ -516,8 +516,9 @@ int main(int argc, char **argv) {
         inFile.close();
     }
     c = 0;
+    int nvme_slot=1;
     while (nvme1) {
-        s = "/sys/block/nvme" + std::to_string(c++) + "/device/syno_block_info";
+        s = "/sys/block/nvme" + std::to_string(c++) + "n1/device/syno_block_info";
         std::ifstream inFile(s);
         if (!inFile) {
             break;
