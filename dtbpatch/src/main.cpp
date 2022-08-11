@@ -82,6 +82,9 @@ class Property {
         int getValueSize() {
             return this->size;
         }
+        void setName(const char* name) {
+            this->name = name;
+        }
         void setValue(const char* valuePtr, int valueSize) {
             this->size = valueSize;
             memcpy(this->value, valuePtr, valueSize);
@@ -496,14 +499,18 @@ void changeInternalNode(Node* node, const char* root, uint32_t port) {
                 }
             }
         }
-        // Patch "mv14xx" nodes. TODO: change this
+        // If node is "mv14xx", rename it
         else if (s.compare("mv14xx") == 0) {
+            it->setName("ahci");
             std::list<Property*> propsAhci = it->getProperties();
             for (auto &it2: propsAhci) {
                 s = it2->getName();
                 if (s.compare("pcie_root") == 0) {
                     it2->setValue(root, strlen(root)+1);
-                } else if (s.compare("phy") == 0) {
+                }
+                // Rename phy to ata_port
+                else if (s.compare("phy") == 0) {
+                    it2->setName("ata_port");
                     uint32_t v = changeEndian(port);
                     it2->setValue(reinterpret_cast<const char*>(&v), 4);
                 }
@@ -571,6 +578,7 @@ int main(int argc, char **argv) {
 
     // Loop if exists "internal1" node
     while (internal1) {
+        // Open pseudo-file from sysfs to read synology data
         s = "/sys/block/sata" + std::to_string(c++) + "/device/syno_block_info";
         std::ifstream inFile(s);
         if (!inFile) {
