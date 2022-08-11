@@ -14,15 +14,15 @@ if [ "${1}" = "patches" ]; then
 
   # Dynamic generation
   if dtbpatch /etc.defaults/${DTBFILE} /var/run/model.dtb; then
-    cp -f /var/run/model.dtb /etc.defaults/${DTBFILE}
+    cp -vf /var/run/model.dtb /etc.defaults/${DTBFILE}
   else
     echo "Error patching dtb"
     exit 1
   fi
-  syno_slot_mapping
 elif [ "${1}" = "late" ]; then
   echo "dtbpatch - late"
   echo "Copying /etc.defaults/${DTBFILE}"
   # copy file
   cp -vf /etc.defaults/${DTBFILE} /tmpRoot/etc.defaults/model.dtb
+  cp -f /usr/sbin/dtc /tmpRoot/usr/bin
 fi
