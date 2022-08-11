@@ -161,31 +161,40 @@ uint32_t changeEndian(uint32_t num) {
 }
 
 /*****************************************************************************/
+/**
+ *  Function to parse dtb file
+ *  fileName = path of .dtb file
+ */
 int parseDtb(char* fileName) {
     struct fdt_header header;
-    
+
+    // Open input stream
     std::ifstream file(fileName);
     if (!file) {
         std::cerr << "Could not open " << fileName << std::endl;
         return -1;
     }
+    // Read header file
     file.read(reinterpret_cast<char*>(&header), sizeof(struct fdt_header));
 
+    // Check if magic number is correct
     if (changeEndian(header.magic) != 0xD00DFEED) {
         std::cerr << "Magic error" << std::endl;
         return -1;
     }
+    // Check dtb version (must be 17)
     if (changeEndian(header.version) != 17) {
         std::cerr << "Version != 17" << std::endl;
         return -1;
     }
 
+    // Read variables
     int size = changeEndian(header.totalsize);
     int offsetStruct = changeEndian(header.off_dt_struct);
     int sizeStruct = changeEndian(header.size_dt_struct);
     int offsetString = changeEndian(header.off_dt_strings);
     int sizeString = changeEndian(header.size_dt_strings);
-    // read memory reservation entries
+    // read memory reservation entries (not used in DSM)
     uint64_t rme1, rme2;
     while (true) {
         file.read(reinterpret_cast<char*>(&rme1), sizeof(uint64_t));
@@ -196,59 +205,66 @@ int parseDtb(char* fileName) {
             break;
         }
     }
-    // read strings
+    // read strings block
     char strBlock[sizeString];
     file.seekg(offsetString);
     file.read(strBlock, sizeString);
-    
+
+    // Auxiliary vars
     uint32_t t, cnt=0, nameSize, propSize, propOff;
     char c, pc[1024];
     bool loop = true, flag;
-    file.seekg(offsetStruct);
-    Node *lastNode;
-    std::vector<Node*> nodes;
+    Node *lastNode;                 // Node currently processed
+    std::vector<Node*> nodes;       // Vector of nodes
     std::string s = "";
+    // Go to entries struct offset
+    file.seekg(offsetStruct);
+    // Loop to read entries
     while (loop) {
+        // Read entry token
         file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
         uint32_t token = changeEndian(t);
+        // Interpret token
         switch (token) {
             // Begin node
             case FDT_BEGIN_NODE:
-              // Read node name
               flag = true;
               s = "";
+              // Read node name
               while (flag) {
+                // Read size of name
                 cnt = sizeof(uint32_t);
                 while (cnt > 0) {
-                    file.read(&c, 1);
+                    file.read(&c, 1);       // Read char by char
                     if (c == 0) {
-                        flag = false;
+                        flag = false;       // Zero represents end of string
                     } else {
-                        s += c;
+                        s += c;             // Add char to aux string
                     }
-                    --cnt;
+                    --cnt;                  // Decrement string size
                 }
               }
-              rootNode = new Node(s);
-              nodes.push_back(rootNode);
+              rootNode = new Node(s);       // Create node with name
+              nodes.push_back(rootNode);    // Add node to vector
               break;
 
             // End node
             case FDT_END_NODE:
-                // Remove last node from vector
-                rootNode = nodes.back();
-                nodes.pop_back();
-                // If not root node
+                rootNode = nodes.back();    // Get last node (current node processed), if node is the last one, then is root node
+                nodes.pop_back();           // Remove it from vector
+                // If not root node, add current node to child of previous node
                 if (nodes.size() > 0) {
-                    lastNode = nodes.back();
-                    lastNode->addNode(rootNode);
+                    lastNode = nodes.back();    // Get previous node processed
+                    lastNode->addNode(rootNode);    // Add current node to child of previous node
                 }
                 break;
 
             // Property
             case FDT_PROP:
+                // Read size of property
                 file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
                 propSize = changeEndian(t);   // size of value
+                // Read relative offset from strings block
                 file.read(reinterpret_cast<char*>(&t), sizeof(uint32_t));
                 propOff = changeEndian(t);    // strings offset
                 // Alignment
@@ -256,24 +272,27 @@ int parseDtb(char* fileName) {
                 if ((t % 4) != 0) {
                     t += (4 - (t % 4));
                 }
-                // read value
+                // Read property value
                 file.read(pc, t);
+                // Create a property with name from strings block, the value and value size
+                // Add this property to node processed currently
                 rootNode->addProperty(new Property((strBlock + propOff), pc, propSize));
                 break;
 
-            // Nop, ignore
+            // Nop, just ignore
             case FDT_NOP:
-              break;
+                break;
 
-            // End of struct
+            // End of entries struct
             case FDT_END:
-              loop = false;
-              break;
+                loop = false;
+                break;
 
             default:
-              std::cerr << "Token not recognized" << std::endl;
-              loop = false;
-              break;
+                // Ops, error on data!
+                std::cerr << "Token not recognized" << std::endl;
+                loop = false;
+                break;
         }
     }
     file.close();
@@ -281,79 +300,107 @@ int parseDtb(char* fileName) {
 }
 
 /*****************************************************************************/
+/**
+ *  Process nodes recursively to reconstruct strings block
+ */
 void recursiveNodes(Node* node) {
+    // Get vector of properties
     std::list<Property*> props = node->getProperties();
+    // Loop all properties
     while (props.size() > 0) {
-        Property* prop = props.front();
-        props.pop_front();
-        std::string s = prop->getName();
-        auto it = strings.find(s);
+        Property* prop = props.front();     // Get first property
+        props.pop_front();                  // Remove it
+        std::string s = prop->getName();    // Get name of property
+        auto it = strings.find(s);          // Check if it already exists
         if (it == strings.end()) {
-            strings.emplace(s, 0);
+            strings.emplace(s, 0);          // Not exists, add to strings vector
         }
     }
-    std::list<Node*>* childs = node->getChildNodes();
+    std::list<Node*>* childs = node->getChildNodes();   // Get child's node
     for (auto &i : *childs) {
-        recursiveNodes(i);
+        recursiveNodes(i);                  // Recursive it
     }
 }
 
 /*****************************************************************************/
+/**
+ *  Process nodes recursively to recreate dtb's entries
+ */
 void recursiveNodes(Node* node, std::ofstream *outFile) {
+    // Write BEGIN NODE token
     uint32_t token = changeEndian(FDT_BEGIN_NODE);
     outFile->write(reinterpret_cast<char*>(&token), sizeof(uint32_t));
+    // Get name of node
     std::string s = node->getName();
     size_t ss = s.size()+1;
+    // Write it
     outFile->write(s.c_str(), ss);
+    // Align with zeroes
     if ((ss % 4) != 0) {
         ss = (4 - (ss % 4));
         token = 0;
         outFile->write(reinterpret_cast<char*>(&token), ss);
     }
+    // Get vector of properties
     std::list<Property*> props = node->getProperties();
     while (props.size() > 0) {
-        Property* prop = props.front();
-        props.pop_front();
+        Property* prop = props.front();     // Get first property
+        props.pop_front();                  // Remove it from vector
+        // Write PROP token
         token = changeEndian(FDT_PROP);
         outFile->write(reinterpret_cast<char*>(&token), sizeof(uint32_t));
+        // Write size of property value
         uint32_t size = changeEndian(prop->getValueSize());
         outFile->write(reinterpret_cast<char*>(&size), sizeof(uint32_t));
+        // Write name offset relative to strings block
         uint32_t so = changeEndian(strings[prop->getName()]);
         outFile->write(reinterpret_cast<char*>(&so), sizeof(uint32_t));
+        // Write property value
         so = prop->getValueSize();
         outFile->write(prop->getValue(), so);
+        // Align with zeroes
         if ((so % 4) != 0) {
             so = (4 - (so % 4));
             token = 0;
             outFile->write(reinterpret_cast<char*>(&token), so);
         }
-        delete prop;
+        delete prop;                    // Clean memory
     }
+    // Process node's child
     while (true) {
         Node* childNode = node->popChildNode();
         if (childNode == NULL) {
             break;
         }
+        // Recursive it
         recursiveNodes(childNode, outFile);
-        delete childNode;
+        delete childNode;               // Clean memory
+        // Write END NODE token
         token = changeEndian(FDT_END_NODE);
         outFile->write(reinterpret_cast<char*>(&token), sizeof(uint32_t));
     }
 }
 
 /*****************************************************************************/
+/**
+ *  Function to remount .dtb file
+ * fileName = path of file to write
+ */
 int remountDtb(char *fileName) {
     struct fdt_header header;
 
-    // remount file
+    // Open file to write
     std::ofstream outFile(fileName);
     if (!outFile) {
         std::cerr << "Could not open " << fileName << " to write" << std::endl;
         return -1;
     }
+    // Write header without values (will be filled in later)
     outFile.write(reinterpret_cast<char*>(&header), sizeof(struct fdt_header));
+    // Save offset of memory reservation entries
     size_t memOffset = outFile.tellp();
     uint64_t rme1, rme2;
+    // Write memory reservation entries
     while (true) {
         rme1 = resMem.front();
         resMem.erase(resMem.begin());
@@ -365,26 +412,35 @@ int remountDtb(char *fileName) {
             break;
         }
     }
-    // get all strings
-    int stringsOffset = 0;
+    // Call function to remount strings block
     recursiveNodes(rootNode);
+    // Calculate the relative offset for each string
+    int stringsOffset = 0;
     for (auto &i: strings) {
         i.second = stringsOffset;
         stringsOffset += i.first.size()+1;
     }
+    // Save offset from node entries struct
     size_t structOffset = outFile.tellp();
+    // Call function to process and write nodes
     recursiveNodes(rootNode, &outFile);
-    uint32_t token = changeEndian(FDT_END_NODE);    // root node
+    // Write END NODE token for root node
+    uint32_t token = changeEndian(FDT_END_NODE);
     outFile.write(reinterpret_cast<char*>(&token), sizeof(uint32_t));
+    // Write END token
     token = changeEndian(FDT_END);
     outFile.write(reinterpret_cast<char*>(&token), sizeof(uint32_t));
+    // Save offset from strings block
     size_t strOffset = outFile.tellp();
+    // Write strings block
     for (auto &i: strings) {
         outFile.write(i.first.c_str(), i.first.size()+1);
     }
+    // Save size of file 
     size_t fileSize = outFile.tellp();
-    outFile.seekp(0);
-    header.magic = changeEndian(0xD00DFEED);
+    outFile.seekp(0);                           // Back to start of file
+    // Fill header with values
+    header.magic = changeEndian(0xD00DFEED);    // Magic number
     header.totalsize = changeEndian(fileSize);
     header.off_dt_struct = changeEndian(structOffset);
     header.off_dt_strings = changeEndian(strOffset);
@@ -394,31 +450,43 @@ int remountDtb(char *fileName) {
     header.boot_cpuid_phys = 0;
     header.size_dt_strings = changeEndian(fileSize - strOffset);
     header.size_dt_struct = changeEndian(strOffset - structOffset);
+    // Rewrite header
     outFile.write(reinterpret_cast<char*>(&header), sizeof(struct fdt_header));
     outFile.close();
     return 0;
 }
 
 /*****************************************************************************/
+/**
+ *  Function to patches "internal" nodes
+ */
 void changeInternalNode(Node* node, const char* root, uint32_t port) {
     std::string s;
 
-    // change properties of subnodes
+    // Change properties of node's child
     std::list<Node*>* nodesInt = node->getChildNodes();
+    // Loop nodes
     for (auto &it: *nodesInt) {
         s = it->getName();
+        // Check if node is "ahci"
         if (s.compare("ahci") == 0) {
+            // Yes, loop your properties
             std::list<Property*> propsAhci = it->getProperties();
             for (auto &it2: propsAhci) {
                 s = it2->getName();
+                // If property is "pcie_root", patch it
                 if (s.compare("pcie_root") == 0) {
                     it2->setValue(root, strlen(root)+1);
-                } else if (s.compare("ata_port") == 0) {
+                }
+                // If property is "ata_port", patch it
+                else if (s.compare("ata_port") == 0) {
                     uint32_t v = changeEndian(port);
                     it2->setValue(reinterpret_cast<const char*>(&v), 4);
                 }
             }
-        } else if (s.compare("led_green") == 0 || s.compare("led_orange") == 0) {
+        }
+        // Patch "led_green" and "led_orange". TODO: Really necessary?
+        else if (s.compare("led_green") == 0 || s.compare("led_orange") == 0) {
             std::list<Property*> propsLed = it->getProperties();
             for (auto &it2: propsLed) {
                 s = it2->getName();
@@ -427,7 +495,9 @@ void changeInternalNode(Node* node, const char* root, uint32_t port) {
                     it2->setValue(s.c_str(), s.size()+1);
                 }
             }
-        } else if (s.compare("mv14xx") == 0) {
+        }
+        // Patch "mv14xx" nodes. TODO: change this
+        else if (s.compare("mv14xx") == 0) {
             std::list<Property*> propsAhci = it->getProperties();
             for (auto &it2: propsAhci) {
                 s = it2->getName();
@@ -443,6 +513,9 @@ void changeInternalNode(Node* node, const char* root, uint32_t port) {
 }
 
 /*****************************************************************************/
+/**
+ *  Function to patch "nvme" node
+ */
 void changeNvmeNode(Node* node, const char* root) {
     std::string s;
 
@@ -456,32 +529,37 @@ void changeNvmeNode(Node* node, const char* root) {
 }
 
 /*****************************************************************************/
+/**
+ *  Entrypoint
+ */
 int main(int argc, char **argv) {
     if (argc < 3) {
         std::cerr << "Use: dtbpatch <model.dtb> <model_patched.dtb>" << std::endl;
         return 1;
     }
+    // Call function to parse Device-tree binary
     int r=parseDtb(argv[1]);
+    // If error, exit
     if (r) return r;
     // patch nodes
     std::string s;
-    Node* internal1 = NULL; // copy from first internal_slot node
-    Node* nvme1 = NULL;     // copy from first nvme_slot node
+    Node* internal1 = NULL; // Copy from first internal_slot node
+    Node* nvme1 = NULL;     // Copy from first nvme_slot node
     std::list<Node*>* childs(rootNode->getChildNodes());
     auto it = (*childs).begin();
     while(it != (*childs).end()) {
         s = (*it)->getName();
-        // check if is a internal_slot@x
+        // Check if is a internal_slot@x
         if (s.find("internal_slot") != std::string::npos) {
             if (NULL == internal1) {
-                internal1 = new Node(*(*it));           // copy it
+                internal1 = new Node(*(*it));           // Copy it
             }
-            it = rootNode->eraseChildNode(it);          // remove it
+            it = rootNode->eraseChildNode(it);          // Remove it
         } else if (s.find("nvme_slot") != std::string::npos) {
             if (NULL == nvme1) {
-                nvme1 = new Node(*(*it));               // copy it
+                nvme1 = new Node(*(*it));               // Copy it
             }
-            it = rootNode->eraseChildNode(it);          // remove it
+            it = rootNode->eraseChildNode(it);          // Remove it
         } else {
             ++it;
         }
@@ -491,6 +569,7 @@ int main(int argc, char **argv) {
     uint32_t ata_port_no=0;
     char buffer[1024];
 
+    // Loop if exists "internal1" node
     while (internal1) {
         s = "/sys/block/sata" + std::to_string(c++) + "/device/syno_block_info";
         std::ifstream inFile(s);
@@ -517,6 +596,7 @@ int main(int argc, char **argv) {
     }
     c = 0;
     int nvme_slot=1;
+    // Loop if exists "nvme1" node
     while (nvme1) {
         s = "/sys/block/nvme" + std::to_string(c++) + "n1/device/syno_block_info";
         std::ifstream inFile(s);

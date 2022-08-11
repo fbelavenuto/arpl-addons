@@ -17,7 +17,9 @@ if [ "${1}" = "patches" ]; then
     cp -f /var/run/model.dtb /etc.defaults/${DTBFILE}
   else
     echo "Error patching dtb"
+    exit 1
   fi
+  syno_slot_mapping
 elif [ "${1}" = "late" ]; then
   echo "dtbpatch - late"
   echo "Copying /etc.defaults/${DTBFILE}"
