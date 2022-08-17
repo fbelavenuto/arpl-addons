@@ -25,7 +25,9 @@ if [ "${1}" = "patches" ]; then
   MAXDISKS=`_get_conf_kv maxdisks /etc/synoinfo.conf`
   if [ -z "${2}" ]; then
     # sysfs is populated here
-    NUMPORTS=`ls /sys/class/scsi_host | wc -w`
+    SCSI_PORTS=`ls /sys/class/scsi_host | wc -w`
+    SAS_PORTS=`ls /sys/class/sas_phy | wc -w`
+    NUMPORTS=$((${SCSI_PORTS}+${SAS_PORTS}))
   else
     NUMPORTS="${2}"
   fi
