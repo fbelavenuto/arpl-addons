@@ -1,5 +1,6 @@
 *.addon
 eudev/all/*
+test.sh
 
 # Prerequisites
 *.d
