@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 git clone --single-branch https://github.com/kmod-project/kmod.git /tmp/kmod
 cd /tmp/kmod
 git checkout v30
