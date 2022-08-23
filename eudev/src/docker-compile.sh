@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
+set -e
+
 git clone --single-branch https://github.com/kmod-project/kmod.git /tmp/kmod
 cd /tmp/kmod
 git checkout v30
 patch -p1 < /input/kmod.patch
 ./autogen.sh
 ./configure CFLAGS='-O2' --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib --enable-tools --disable-manpages --disable-python --without-zstd --without-xz --without-zlib --without-openssl
-make all install
+make
+sudo make install
 make DESTDIR=/output install
 git clone --single-branch https://github.com/eudev-project/eudev.git /tmp/eudev
 cd /tmp/eudev
