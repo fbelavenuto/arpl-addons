@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
+# test output write allowed before start
+mkdir /output/test || exit 1
+rmdir /output/test
+
 git clone --single-branch https://github.com/kmod-project/kmod.git /tmp/kmod
 cd /tmp/kmod
 git checkout v30
 patch -p1 < /input/kmod.patch
 ./autogen.sh
 ./configure CFLAGS='-O2' --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib --enable-tools --disable-manpages --disable-python --without-zstd --without-xz --without-zlib --without-openssl
-make
+make all
 sudo make install
 make DESTDIR=/output install
 git clone --single-branch https://github.com/eudev-project/eudev.git /tmp/eudev
