@@ -7,5 +7,9 @@ if [ "${1}" = "modules" ]; then
   echo "Triggering add events to udev"
   udevadm trigger --type=subsystems --action=add
   udevadm trigger --type=devices --action=add
-  udevadm settle --timeout=10 || echo "udevadm settle failed"
+  udevadm settle --timeout=30 || echo "udevadm settle failed"
+  # Give more time
+  sleep 10
+  # Remove from memory to not conflict with RAID mount scripts
+  /usr/bin/killall udevd
 fi
