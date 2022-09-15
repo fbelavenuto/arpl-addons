@@ -3,7 +3,11 @@
 SED_PATH='/tmpRoot/usr/bin/sed'
 
 if [ "${1}" = "late" ]; then
-  echo "Script for fixing missing HW features dependencies"
+  echo "Script for fixing missing HW features dependencies and another functions"
+
+  # Copy utilities to dsm partition
+  cp -vf /usr/bin/arpl-reboot.sh /tmpRoot/usr/bin
+  cp -vf /usr/bin/grub-editenv /tmpRoot/usr/bin
 
   # CPU performance scaling
   if [ -f /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf ]; then
