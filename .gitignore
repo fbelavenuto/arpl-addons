@@ -1,6 +1,7 @@
 *.addon
 eudev/all/*
 test.sh
+.nvram
 
 # Prerequisites
 *.d
