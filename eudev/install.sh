@@ -12,4 +12,14 @@ if [ "${1}" = "modules" ]; then
   sleep 10
   # Remove from memory to not conflict with RAID mount scripts
   /usr/bin/killall udevd
+  sleep 10
+  /sbin/udevd -d
+  echo "Triggering add events to udev, again"
+  udevadm trigger --type=subsystems --action=add
+  udevadm trigger --type=devices --action=add
+  udevadm settle --timeout=30 || echo "udevadm settle failed"
+  # Give more time
+  sleep 10
+  # Remove from memory to not conflict with RAID mount scripts
+  /usr/bin/killall udevd
 fi
