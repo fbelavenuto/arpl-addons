@@ -9,7 +9,7 @@ if [ "${1}" = "late" ]; then
 Description=Configure RTC to DSM power schedule
 
 [Timer]
-OnCalendar=*-*-* *:*:00
+OnCalendar=*-*-* *:*:30
 Persistent=true
 
 [Install]

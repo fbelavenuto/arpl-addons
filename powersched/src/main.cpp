@@ -36,6 +36,7 @@ static std::vector<std::time_t> diffs;
 
 /*****************************************************************************/
 void processFile(void) {
+    std::string line;
     // Open file and check if it exists
     std::ifstream dsmFile(dsmFilePath);
     if (!dsmFile.good()) {
@@ -43,7 +44,6 @@ void processFile(void) {
         // that there is no configuration
         return;
     }
-    std::string line;
     // Read first line
     getline(dsmFile, line);
     // Check if is a Header Power On
@@ -67,7 +67,6 @@ void processFile(void) {
             int config = (timeOn >> 24) & 0xFF;
             // If enabled
             if (config) {
-                std::tm date;
                 for (int i = 0; i < 8; i++) {
                     uint8_t mask = 1 << i;
                     if (daysweek & mask) {
@@ -77,6 +76,7 @@ void processFile(void) {
                             // If in past, put in future
                             offset += 7;
                         }
+                        std::tm date;
                         // Copy struct to calculate difference
                         memcpy(&date, now, sizeof(std::tm));
                         date.tm_hour = hour;
@@ -86,7 +86,7 @@ void processFile(void) {
                         std::time_t diff = std::mktime(&date) + (offset * 60 * 60 * 24);
                         // Calculate time difference with offset
                         diff = std::difftime(diff, std::mktime(now));
-                        if (diff >= 0) {
+                        if (diff >= 60) {
                             // If in future, add absolute time to vector
                             diffs.push_back(t + diff);
                         }
@@ -116,3 +116,5 @@ void processFile(void) {
 int main(int argc, char **argv) {
     processFile();
 }
+
+//while true; do cat /sys/class/rtc/rtc0/wakealarm; echo $(date -d @`cat /sys/class/rtc/rtc0/wakealarm`); sleep 20; done
