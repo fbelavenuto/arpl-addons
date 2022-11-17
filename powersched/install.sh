@@ -30,4 +30,10 @@ WantedBy=multi-user.target
 EOF
   mkdir -p /tmpRoot/etc/systemd/system/multi-user.target.wants
   ln -sf /etc/systemd/system/powersched.service /tmpRoot/etc/systemd/system/multi-user.target.wants/powersched.service
+  # Reduce the systemd log level
+  if grep -q "^LogLevel=" /tmpRoot/etc/systemd/system.conf; then
+    sed 's\^LogLevel=.*\LogLevel=notice' -i /tmpRoot/etc/systemd/system.conf
+  else
+    echo "LogLevel=notice" >> /tmpRoot/etc/systemd/system.conf
+  fi
 fi
