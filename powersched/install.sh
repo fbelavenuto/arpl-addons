@@ -36,5 +36,10 @@ EOF
   else
     echo "LogLevel=notice" >> /tmpRoot/etc/systemd/system.conf
   fi
-  sed 's|^destination d_scemd.*|destination d_scemd { file("/dev/null"); };|' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/scemd.conf
+  for path in /tmpRoot/etc.defaults /tmpRoot/etc
+  do
+    sed 's|destination(d_scemd);|flags(final);|'       -i ${path}/syslog-ng/patterndb.d/scemd.conf
+    sed 's|destination(d_synosystemd);|flags(final);|' -i ${path}/syslog-ng/patterndb.d/synosystemd.conf
+    sed 's|destination(d_systemd);|flags(final);|'     -i ${path}/syslog-ng/patterndb.d/synosystemd.conf
+  done
 fi
