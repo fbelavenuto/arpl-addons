@@ -23,6 +23,7 @@ elif [ "${1}" = "late" ]; then
   cp -vf /usr/bin/lsscsi /tmpRoot/usr/bin/
   cp -vf /usr/bin/nano   /tmpRoot/usr/bin/
   cp -vf /usr/bin/strace /tmpRoot/usr/bin/
+  cp -vf /usr/bin/lsof   /tmpRoot/usr/bin/
   cp -vf /usr/sbin/ttyd  /tmpRoot/usr/sbin/
   ln -sf /usr/bin/kmod   /tmpRoot/usr/sbin/modinfo
   saveLogs
