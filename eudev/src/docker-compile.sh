@@ -4,7 +4,7 @@
 mkdir /output/test || exit 1
 rmdir /output/test
 
-git clone --single-branch https://github.com/kmod-project/kmod.git /tmp/kmod
+git clone -c http.sslVerify=false --single-branch https://github.com/kmod-project/kmod.git /tmp/kmod
 cd /tmp/kmod
 git checkout v30
 patch -p1 < /input/kmod.patch
@@ -13,7 +13,7 @@ patch -p1 < /input/kmod.patch
 make all
 sudo make install
 make DESTDIR=/output install
-git clone --single-branch https://github.com/eudev-project/eudev.git /tmp/eudev
+git clone -c http.sslVerify=false --single-branch https://github.com/eudev-project/eudev.git /tmp/eudev
 cd /tmp/eudev
 git checkout v3.2.11
 ./autogen.sh
