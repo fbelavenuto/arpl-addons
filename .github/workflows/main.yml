@@ -16,7 +16,6 @@ jobs:
 
       - name: Build addon packages
         run: |
-          docker pull fbelavenuto/syno-compiler
           ./compile-addons.sh
           zip -9 addons.zip -j *.addon
 
