@@ -8,7 +8,7 @@ test.sh
 
 # Object files
 *.o
-*.ko
+#*.ko
 *.obj
 *.elf
 
