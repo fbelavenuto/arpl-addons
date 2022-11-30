@@ -55,4 +55,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 powersched/src/powersched
-powersched/all/usr/sbin/powersched
+
