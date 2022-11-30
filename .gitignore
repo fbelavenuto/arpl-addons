@@ -3,7 +3,6 @@ test.sh
 .nvram
 
 # Prerequisites
-*.d
 
 # Object files
 *.o
@@ -55,4 +54,3 @@ Module.symvers
 Mkfile.old
 dkms.conf
 powersched/src/powersched
-
