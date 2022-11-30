@@ -1,5 +1,4 @@
 *.addon
-eudev/all/*
 test.sh
 .nvram
 
