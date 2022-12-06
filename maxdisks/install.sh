@@ -67,8 +67,10 @@ if [ "${1}" = "late" ]; then
    sed 's|^destination d_synosystemd { file("/dev/null"); };|destination d_synosystemd { file("/var/log/synosystemd.log"); };|' -i /tmpRoot/etc/syslog-ng/patterndb.d/synosystemd.conf
    sed 's|^destination d_systemd { file("/dev/null"); };|destination d_systemd { file("/var/log/synosystemd.log"); };|' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/synosystemd.conf
    sed 's|^destination d_systemd { file("/dev/null"); };|destination d_systemd { file("/var/log/synosystemd.log"); };|' -i /tmpRoot/etc/syslog-ng/patterndb.d/synosystemd.conf
-   sed 's|flags(final);||' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/scemd.conf
-   sed 's|flags(final);||' -i /tmpRoot/etc/syslog-ng/patterndb.d/scemd.conf
-   sed 's|flags(final);||' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/synosystemd.conf
-   sed 's|flags(final);||' -i /tmpRoot/etc/syslog-ng/patterndb.d/synosystemd.conf
+   sed 's|flags(final);|destination(d_scemd);|' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/scemd.conf
+   sed 's|flags(final);|destination(d_scemd);|' -i /tmpRoot/etc/syslog-ng/patterndb.d/scemd.conf
+   sed 's|filter(f_synosystemd); flags(final);|filter(f_systemd); destination(d_synosystemd);|' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/synosystemd.conf
+   sed 's|filter(f_synosystemd); flags(final);|filter(f_systemd); destination(d_synosystemd);|' -i /tmpRoot/etc/syslog-ng/patterndb.d/synosystemd.conf
+   sed 's|filter(f_systemd); flags(final);|filter(f_systemd); destination(d_systemd);|' -i /tmpRoot/etc.defaults/syslog-ng/patterndb.d/synosystemd.conf
+   sed 's|filter(f_systemd); flags(final);|filter(f_systemd); destination(d_systemd);|' -i /tmpRoot/etc/syslog-ng/patterndb.d/synosystemd.conf
 fi
