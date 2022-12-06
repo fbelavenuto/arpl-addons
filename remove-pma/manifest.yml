@@ -1,4 +1,4 @@
-version: 1
+version: 0
 name: remove-pma
 description: "Create a cron entry to remove *.pma files from Surveillance Station (#215 issue)"
 all:
