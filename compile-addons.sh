@@ -49,7 +49,6 @@ function readConfigEntriesArray() {
   ${YQ_BIN} eval '.'${1}' | explode(.) | to_entries | map([.key])[] | .[]' "${2}"
 }
 
-
 ###############################################################################
 function compile-addon() {
   # Read manifest file
