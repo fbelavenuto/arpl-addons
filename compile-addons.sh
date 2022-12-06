@@ -55,7 +55,7 @@ function compile-addon() {
   # Read manifest file
   MANIFEST="${1}/manifest.yml"
   if [ ! -f "${MANIFEST}" ]; then
-    echo -e "\033[1;43mWarning: ${MANIFEST} not found, ignoring it\033[0m"
+    echo -e "\033[1;44mWarning: ${MANIFEST} not found, ignoring it\033[0m"
     exit 0
   fi
   echo -e "\033[7mProcessing manifest ${MANIFEST}\033[0m"
@@ -65,7 +65,8 @@ function compile-addon() {
   VER=`readConfigKey "version" "${MANIFEST}"`
   # Check manifest version
   if [ ${VER} -ne 1 ]; then
-    echo -e "\033[1;43mWarning: version ${VER} of manifest not suported, ignoring it\033[0m"
+    echo -e "\033[1;44mWarning: version ${VER} of manifest not suported, ignoring it\033[0m"
+    exit 0
   fi
   # Check if has compile script
   COMPILESCRIPT=`readConfigKey "compile-script" "${MANIFEST}"`
