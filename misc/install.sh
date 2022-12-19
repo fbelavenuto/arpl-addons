@@ -31,6 +31,17 @@ if [ "${1}" = "late" ]; then
     fi
   fi
 
+  # aesni-intel
+  if [ -f /tmpRoot/usr/lib/modules-load.d/70-crypto-kernel.conf ]; then
+    CPUFLAGS=`cat /proc/cpuinfo | grep flags | grep aes | wc -l`
+    if [ ${CPUFLAGS} -gt 0 ]; then
+        echo "CPU Supports AES, aesni-intel should load"
+    else
+        echo "CPU does NOT support AES, aesni-intel will not load, disabling"
+        ${SED_PATH} -i 's/^aesni-intel/# aesni-intel/g' /tmpRoot/usr/lib/modules-load.d/70-crypto-kernel.conf
+    fi
+  fi
+
   # Nvidia GPU
   if [ -f /tmpRoot/usr/lib/modules-load.d/70-syno-nvidia-gpu.conf ]; then
     NVIDIADEV=$(cat /proc/bus/pci/devices | grep -i 10de | wc -l)
