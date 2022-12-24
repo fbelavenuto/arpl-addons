@@ -1,11 +1,13 @@
 #!/usr/bin/env ash
 
+SED_PATH='/tmpRoot/usr/bin/sed'
+
 if [ "${1}" = "late" ]; then
   echo "Installing powersched tools"
   cp -vf /usr/sbin/powersched /tmpRoot/usr/sbin/powersched
   chmod 755 /tmpRoot/usr/sbin/powersched
+  # Clean old entries
+  ${SED_PATH} -i '/\/usr\/sbin\/powersched/d' /tmpRoot/etc/crontab 
   # Add line to crontab, execute each minute
-  if ! grep -q "/usr/sbin/powersched" /tmpRoot/etc/crontab; then
-    echo "* * * * * root /usr/sbin/powersched" >> /tmpRoot/etc/crontab
-  fi
+  echo "*       *       *       *       *       root    /usr/sbin/powersched #arpl powersched addon" >> /tmpRoot/etc/crontab
 fi
