@@ -184,7 +184,7 @@ function compile-addon() {
 # Main
 if [ $# -ge 1 ]; then
   for A in $@; do
-    compile-addon ${A}
+    compile-addon ${A%/}
   done
 else
   while read D; do

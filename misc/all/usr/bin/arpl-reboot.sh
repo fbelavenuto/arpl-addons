@@ -16,4 +16,6 @@ echo 1 > /proc/sys/kernel/syno_install_flag
 mount /dev/synoboot1 /mnt
 grub-editenv /mnt/grub/grubenv set next_entry="${1}"
 umount /mnt
-reboot
+[ -x /usr/syno/sbin/synopoweroff ] && \
+  /usr/syno/sbin/synopoweroff -r ||
+  reboot
