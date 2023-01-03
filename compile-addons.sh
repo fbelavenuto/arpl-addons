@@ -161,8 +161,10 @@ function compile-addon() {
       # Compile using docker
       rm -rf "${TMP_PATH}/${1}-mods"
       mkdir -p "${TMP_PATH}/${1}-mods"
-      docker run --rm -t -v "${TMP_PATH}/${1}-mods":/output \
-        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-toolkit:${PLATFORM}-7.1 compile-module
+#      docker run --rm -t -v "${TMP_PATH}/${1}-mods":/output \
+#        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-toolkit:${PLATFORM}-7.1 compile-module
+      docker run --rm -t --user `id -u` -v "${TMP_PATH}/${1}-mods":/output \
+        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-compiler compile-module ${PLATFORM}
       mkdir -p "${OUT_PATH}/${P}/root/modules"
       mv "${TMP_PATH}/${1}-mods/"*.ko "${OUT_PATH}/${P}/root/modules/"
       rm -rf "${TMP_PATH}/${1}-mods"
