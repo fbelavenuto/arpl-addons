@@ -9,7 +9,8 @@ if [ "${1}" = "late" ]; then
   cp -vf /usr/bin/arpl-reboot.sh /tmpRoot/usr/bin
   cp -vf /usr/bin/grub-editenv /tmpRoot/usr/bin
 
-  mount -t sysfs /sys /sys
+  mount -t sysfs sysfs /sys
+  modprobe acpi-cpufreq
   # CPU performance scaling
   if [ -f /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf ]; then
     CPUFREQ=`ls -ltr /sys/devices/system/cpu/cpufreq/* 2>/dev/null | wc -l`
@@ -18,6 +19,7 @@ if [ "${1}" = "late" ]; then
         ${SED_PATH} -i 's/^acpi-cpufreq/# acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
     else
         echo "CPU supports CPU Performance Scaling"
+        ${SED_PATH} -i 's/^# acpi-cpufreq/acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
     fi
   fi
   umount /sys
