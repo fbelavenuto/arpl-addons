@@ -18,8 +18,9 @@ if [ "${1}" = "late" ]; then
         echo "CPU does NOT support CPU Performance Scaling, disabling"
         ${SED_PATH} -i 's/^acpi-cpufreq/# acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
     else
-        echo "CPU supports CPU Performance Scaling"
+        echo "CPU supports CPU Performance Scaling, enabling"
         ${SED_PATH} -i 's/^# acpi-cpufreq/acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
+        cp -vf /usr/lib/modules/cpufreq_* /tmpRoot/usr/lib/modules/
     fi
   fi
   umount /sys
