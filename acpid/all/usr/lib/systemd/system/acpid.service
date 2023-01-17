@@ -1,0 +1,14 @@
+[Unit]
+Description=ACPI Daemon
+DefaultDependencies=no
+IgnoreOnIsolate=true
+After=multi-user.target
+
+[Service]
+Restart=always
+RestartSec=30
+PIDFile=/var/run/acpid.pid
+ExecStart=/usr/sbin/acpid -f
+
+[X-Synology]
+Author=Virtualization Team
