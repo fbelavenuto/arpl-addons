@@ -27,7 +27,7 @@ elif [ "${1}" = "late" ]; then
   cp -vf /usr/sbin/ttyd  /tmpRoot/usr/sbin/
   ln -sf /usr/bin/kmod   /tmpRoot/usr/sbin/modinfo
   saveLogs
-  DEST="/tmpRoot/etc/systemd/system/savelogs.service"
+  DEST="/tmpRoot/lib/systemd/system/savelogs.service"
 
   echo "[Unit]"                                                               > ${DEST}
   echo "Description=ARPL save logs for debug"                                 >>${DEST}
@@ -48,5 +48,5 @@ elif [ "${1}" = "late" ]; then
   echo "WantedBy=multi-user.target"                                           >>${DEST}
 
   mkdir -p /tmpRoot/etc/systemd/system/multi-user.target.wants
-  ln -sf /etc/systemd/system/savelogs.service /tmpRoot/etc/systemd/system/multi-user.target.wants/savelogs.service
+  ln -sf /lib/systemd/system/savelogs.service /tmpRoot/lib/systemd/system/multi-user.target.wants/savelogs.service
 fi
