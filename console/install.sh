@@ -29,7 +29,7 @@ elif [ "${1}" = "rcExit" ]; then
 elif [ "${1}" = "late" ]; then
   # run when boot installed DSM
   cp -fv /tmpRoot/lib/systemd/system/serial-getty\@.service /tmpRoot/lib/systemd/system/getty\@.service
-  ${SED_PATH} -i 's|^ExecStart=.*|ExecStart=-/sbin/agetty -w %I 115200 linux|' /tmpRoot/lib/systemd/system/getty\@.service
+  ${SED_PATH} -i 's|^ExecStart=.*|ExecStart=-/sbin/agetty %I 115200 linux|' /tmpRoot/lib/systemd/system/getty\@.service
   mkdir -vp /tmpRoot/lib/systemd/system/getty.target.wants
   ln -sfv /lib/systemd/system/getty\@.service /tmpRoot/lib/systemd/system/getty.target.wants/getty\@tty1.service
   echo -e "DSM mode\n" > /tmpRoot/etc/issue
@@ -37,7 +37,6 @@ elif [ "${1}" = "late" ]; then
   cp -fv /usr/bin/loadkeys /tmpRoot/usr/bin/
   cp -fv /usr/bin/setleds /tmpRoot/usr/bin/
   DEST="/tmpRoot/lib/systemd/system/keymap.service"
-
   echo "[Unit]"                                                               > ${DEST}
   echo "Description=Configure keymap"                                         >>${DEST}
   echo "After=getty.target"                                                   >>${DEST}
@@ -52,7 +51,7 @@ elif [ "${1}" = "late" ]; then
 
   mkdir -p /tmpRoot/etc/systemd/system/multi-user.target.wants
   ln -sf /lib/systemd/system/keymap.service /tmpRoot/lib/systemd/system/multi-user.target.wants/keymap.service
-
+  # Workaround for DVA1622
   if [ "${MODEL}" = "DVA1622" ]; then
     echo > /dev/tty2
     /usr/bin/ioctl /dev/tty0 22022 -v 2
