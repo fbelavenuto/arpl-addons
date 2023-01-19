@@ -7,6 +7,7 @@ if [ "${1}" = "modules" ]; then
   echo "Triggering add events to udev"
   udevadm trigger --type=subsystems --action=add
   udevadm trigger --type=devices --action=add
+  udevadm trigger --type=devices --action=change
   udevadm settle --timeout=30 || echo "udevadm settle failed"
   # Give more time
   sleep 10

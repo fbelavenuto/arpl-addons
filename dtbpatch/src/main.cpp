@@ -16,6 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
+#define DEBUG
 /*
  * Quick and dirty devicetree patcher
  */
@@ -172,6 +173,9 @@ int parseDtb(char* fileName) {
     struct fdt_header header;
 
     // Open input stream
+#ifdef DEBUG
+    fprintf(stderr, "Opening %s\n", fileName);
+#endif
     std::ifstream file(fileName);
     if (!file) {
         std::cerr << "Could not open " << fileName << std::endl;
@@ -197,6 +201,14 @@ int parseDtb(char* fileName) {
     int sizeStruct = changeEndian(header.size_dt_struct);
     int offsetString = changeEndian(header.off_dt_strings);
     int sizeString = changeEndian(header.size_dt_strings);
+#ifdef DEBUG
+    fprintf(stderr, "size=%d\n", size);
+    fprintf(stderr, "offsetStruct=%d\n", offsetStruct);
+    fprintf(stderr, "sizeStruct=%d\n", sizeStruct);
+    fprintf(stderr, "offsetString=%d\n", offsetString);
+    fprintf(stderr, "sizeString=%d\n", sizeString);
+#endif
+
     // read memory reservation entries (not used in DSM)
     uint64_t rme1, rme2;
     while (true) {
@@ -208,6 +220,9 @@ int parseDtb(char* fileName) {
             break;
         }
     }
+#ifdef DEBUG
+    fprintf(stderr, "Reading string block\n");
+#endif
     // read strings block
     char strBlock[sizeString];
     file.seekg(offsetString);
@@ -284,6 +299,9 @@ int parseDtb(char* fileName) {
 
             // Nop, just ignore
             case FDT_NOP:
+#ifdef DEBUG
+    fprintf(stderr, "FDT_NOP\n");
+#endif
                 break;
 
             // End of entries struct
@@ -546,6 +564,7 @@ int main(int argc, char **argv) {
     }
     // Call function to parse Device-tree binary
     int r=parseDtb(argv[1]);
+
     // If error, exit
     if (r) return r;
     // patch nodes
@@ -554,15 +573,24 @@ int main(int argc, char **argv) {
     Node* nvme1 = NULL;     // Copy from first nvme_slot node
     std::list<Node*>* childs(rootNode->getChildNodes());
     auto it = (*childs).begin();
+#ifdef DEBUG
+    fprintf(stderr, "Interating nodes\n");
+#endif
     while(it != (*childs).end()) {
         s = (*it)->getName();
         // Check if is a internal_slot@x
         if (s.find("internal_slot") != std::string::npos) {
+#ifdef DEBUG
+    fprintf(stderr, "Found internal_slot\n");
+#endif
             if (NULL == internal1) {
                 internal1 = new Node(*(*it));           // Copy it
             }
             it = rootNode->eraseChildNode(it);          // Remove it
         } else if (s.find("nvme_slot") != std::string::npos) {
+#ifdef DEBUG
+    fprintf(stderr, "Found nvme_slot\n");
+#endif
             if (NULL == nvme1) {
                 nvme1 = new Node(*(*it));               // Copy it
             }
@@ -580,6 +608,9 @@ int main(int argc, char **argv) {
     while (internal1) {
         // Open pseudo-file from sysfs to read synology data
         s = "/sys/block/sata" + std::to_string(c++) + "/device/syno_block_info";
+#ifdef DEBUG
+    fprintf(stderr, "Checking file %s\n", s.c_str());
+#endif
         std::ifstream inFile(s);
         if (!inFile) {
             break;
