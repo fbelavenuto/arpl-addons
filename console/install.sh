@@ -7,13 +7,12 @@ if [ "${1}" = "modules" ]; then
   if [ -n "${2}" ]; then
     /usr/sbin/modprobe ${2}
   else
-    for M in i915 efifb vesafb; do
+    for M in i915 efifb vesafb vga16fb; do
       [ -e /sys/class/graphics/fb0 ] && break
       /usr/sbin/modprobe ${M}
     done
   fi
   /usr/sbin/modprobe fbcon
-  /usr/sbin/modprobe pcspkr
 elif [ "${1}" = "rcExit" ]; then
   # Run only in junior mode (DSM not installed)
   echo -e "Junior mode\n" > /etc/issue
