@@ -13,6 +13,13 @@ if [ "${1}" = "modules" ]; then
     done
   fi
   /usr/sbin/modprobe fbcon
+  echo "ARPL console - wait..." > /dev/tty1
+  # Workaround for DVA1622
+  if [ "${MODEL}" = "DVA1622" ]; then
+    echo > /dev/tty2
+    /usr/bin/ioctl /dev/tty0 22022 -v 2
+    /usr/bin/ioctl /dev/tty0 22022 -v 1
+  fi
 elif [ "${1}" = "rcExit" ]; then
   # Run only in junior mode (DSM not installed)
   echo -e "Junior mode\n" > /etc/issue
