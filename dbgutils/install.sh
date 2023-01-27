@@ -12,7 +12,9 @@ function saveLogs() {
 
 if [ "${1}" = "early" ]; then
   echo "Starting ttyd..."
-  /usr/sbin/ttyd /usr/bin/ash &
+  /usr/sbin/ttyd /usr/bin/ash -l &
+elif [ "${1}" = "jrExit" ]; then
+  saveLogs
 elif [ "${1}" = "rcExit" ]; then
   saveLogs
 elif [ "${1}" = "late" ]; then
@@ -29,23 +31,23 @@ elif [ "${1}" = "late" ]; then
   saveLogs
   DEST="/tmpRoot/lib/systemd/system/savelogs.service"
 
-  echo "[Unit]"                                                               > ${DEST}
-  echo "Description=ARPL save logs for debug"                                 >>${DEST}
-  echo                                                                        >>${DEST}
-  echo "[Service]"                                                            >>${DEST}
-  echo "Type=oneshot"                                                         >>${DEST}
-  echo "RemainAfterExit=true"                                                 >>${DEST}
-  echo "ExecStop=/sbin/modprobe vfat"                                         >>${DEST}
+  echo "[Unit]"                                                                  >${DEST}
+  echo "Description=ARPL save logs for debug"                                   >>${DEST}
+  echo                                                                          >>${DEST}
+  echo "[Service]"                                                              >>${DEST}
+  echo "Type=oneshot"                                                           >>${DEST}
+  echo "RemainAfterExit=true"                                                   >>${DEST}
+  echo "ExecStop=/sbin/modprobe vfat"                                           >>${DEST}
   echo "ExecStop=/bin/sh -c '/bin/echo 1 > /proc/sys/kernel/syno_install_flag'" >>${DEST}
-  echo "ExecStop=/bin/mount /dev/synoboot1 /mnt"                              >>${DEST}
-  echo "ExecStop=/bin/mkdir -p /mnt/logs/dsm"                                 >>${DEST}
-  echo "ExecStop=/bin/sh -c '/bin/cp /var/log/* /mnt/logs/dsm || true'"       >>${DEST}
-  echo "ExecStop=/bin/sh -c '/bin/dmesg > /mnt/logs/dsm/dmesg'"               >>${DEST}
-  echo "ExecStop=/bin/sh -c '/bin/journalctl > /mnt/logs/dsm/journalctl.log'" >>${DEST}
-  echo "ExecStop=/bin/umount /mnt"                                            >>${DEST}
-  echo                                                                        >>${DEST}
-  echo "[Install]"                                                            >>${DEST}
-  echo "WantedBy=multi-user.target"                                           >>${DEST}
+  echo "ExecStop=/bin/mount /dev/synoboot1 /mnt"                                >>${DEST}
+  echo "ExecStop=/bin/mkdir -p /mnt/logs/dsm"                                   >>${DEST}
+  echo "ExecStop=/bin/sh -c '/bin/cp /var/log/* /mnt/logs/dsm || true'"         >>${DEST}
+  echo "ExecStop=/bin/sh -c '/bin/dmesg > /mnt/logs/dsm/dmesg'"                 >>${DEST}
+  echo "ExecStop=/bin/sh -c '/bin/journalctl > /mnt/logs/dsm/journalctl.log'"   >>${DEST}
+  echo "ExecStop=/bin/umount /mnt"                                              >>${DEST}
+  echo                                                                          >>${DEST}
+  echo "[Install]"                                                              >>${DEST}
+  echo "WantedBy=multi-user.target"                                             >>${DEST}
 
   mkdir -p /tmpRoot/etc/systemd/system/multi-user.target.wants
   ln -sf /lib/systemd/system/savelogs.service /tmpRoot/lib/systemd/system/multi-user.target.wants/savelogs.service
