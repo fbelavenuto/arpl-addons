@@ -23,24 +23,6 @@ function readConfigKey() {
 }
 
 ###############################################################################
-# Read Entries as map(key=value) from yaml config file
-# 1 - Path of key
-# 2 - Path of yaml config file
-# Returns map of values
-function readConfigMap() {
-  ${YQ_BIN} eval '.'${1}' | explode(.) | to_entries | map([.key, .value] | join("=")) | .[]' "${2}"
-}
-
-###############################################################################
-# Read an array from yaml config file
-# 1 - Path of key
-# 2 - Path of yaml config file
-# Returns array/map of values
-function readConfigArray() {
-  ${YQ_BIN} eval '.'${1} "${2}"
-}
-
-###############################################################################
 # Read Entries as array from yaml config file
 # 1 - Path of key
 # 2 - Path of yaml config file

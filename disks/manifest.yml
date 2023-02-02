@@ -1,7 +1,7 @@
 version: 1
-name: maxdisks
+name: disks
 system: true
-description: "Adjust maxdisks and internalportcfg automatically"
+description: "Config disks related setting"
 all:
   install-script: "install.sh"
   copy: "all"
