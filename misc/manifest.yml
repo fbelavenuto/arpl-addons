@@ -1,6 +1,7 @@
 version: 1
 name: misc
 description: "Miscellaneous functions"
+system: true
 all:
   install-script: "install.sh"
   copy: "all"
