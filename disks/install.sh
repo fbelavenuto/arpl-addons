@@ -132,54 +132,56 @@ function nvmePorts() {
 #
 function dtModel() {
   DEST="/addons/model.dts"
-  echo "/dts-v1/;"                                                 > ${DEST}
-  echo "/ {"                                                      >> ${DEST}
-  echo "    compatible = \"Synology\";"                           >> ${DEST}
-  echo "    model = \"${1}\";"                                    >> ${DEST}
-  echo "    version = <0x01>;"                                    >> ${DEST}
-  # SATA ports
-  I=1
-  while true; do
-    [ ! -d /sys/block/sata${I} ] && break
-    PCIEPATH=`grep 'pciepath' /sys/block/sata${I}/device/syno_block_info | cut -d'=' -f2`
-    ATAPORT=`grep 'ata_port_no' /sys/block/sata${I}/device/syno_block_info | cut -d'=' -f2`
-    echo "    internal_slot@${I} {"                               >> ${DEST}
-    echo "        protocol_type = \"sata\";"                      >> ${DEST}
-    echo "        ahci {"                                         >> ${DEST}
-    echo "            pcie_root = \"${PCIEPATH}\";"               >> ${DEST}
-    echo "            ata_port = <0x`printf '%02X' ${ATAPORT}`>;" >> ${DEST}
-    echo "        };"                                             >> ${DEST}
-    echo "    };"                                                 >> ${DEST}
-    I=$((${I}+1))
-  done
-  NUMPORTS=$((${I}-1))
-  _set_conf_kv rd "maxdisks" "${NUMPORTS}"
-  echo "maxdisks=${NUMPORTS}"
+  if [ ! -f "${DEST}" ]; then  # Users can put their own dts.
+    echo "/dts-v1/;"                                                 > ${DEST}
+    echo "/ {"                                                      >> ${DEST}
+    echo "    compatible = \"Synology\";"                           >> ${DEST}
+    echo "    model = \"${1}\";"                                    >> ${DEST}
+    echo "    version = <0x01>;"                                    >> ${DEST}
+    # SATA ports
+    I=1
+    while true; do
+      [ ! -d /sys/block/sata${I} ] && break
+      PCIEPATH=`grep 'pciepath' /sys/block/sata${I}/device/syno_block_info | cut -d'=' -f2`
+      ATAPORT=`grep 'ata_port_no' /sys/block/sata${I}/device/syno_block_info | cut -d'=' -f2`
+      echo "    internal_slot@${I} {"                               >> ${DEST}
+      echo "        protocol_type = \"sata\";"                      >> ${DEST}
+      echo "        ahci {"                                         >> ${DEST}
+      echo "            pcie_root = \"${PCIEPATH}\";"               >> ${DEST}
+      echo "            ata_port = <0x`printf '%02X' ${ATAPORT}`>;" >> ${DEST}
+      echo "        };"                                             >> ${DEST}
+      echo "    };"                                                 >> ${DEST}
+      I=$((${I}+1))
+    done
+    NUMPORTS=$((${I}-1))
+    _set_conf_kv rd "maxdisks" "${NUMPORTS}"
+    echo "maxdisks=${NUMPORTS}"
 
-  # NVME ports
-  COUNT=1
-  for P in `nvmePorts true`; do
-    echo "    nvme_slot@${COUNT} {"                               >> ${DEST}
-    echo "        pcie_root = \"${P}\";"                          >> ${DEST}
-    echo "        port_type = \"ssdcache\";"                      >> ${DEST}
-    echo "    };"                                                 >> ${DEST}
-    COUNT=$((${COUNT}+1))
-  done
+    # NVME ports
+    COUNT=1
+    for P in `nvmePorts true`; do
+      echo "    nvme_slot@${COUNT} {"                               >> ${DEST}
+      echo "        pcie_root = \"${P}\";"                          >> ${DEST}
+      echo "        port_type = \"ssdcache\";"                      >> ${DEST}
+      echo "    };"                                                 >> ${DEST}
+      COUNT=$((${COUNT}+1))
+    done
 
-  # USB ports
-  COUNT=1
-  for I in `getUsbPorts`; do
-    echo "    usb_slot@${COUNT} {"                                >> ${DEST}
-    echo "      usb2 {"                                           >> ${DEST}
-    echo "        usb_port =\"${I}\";"                            >> ${DEST}
-    echo "      };"                                               >> ${DEST}
-    echo "      usb3 {"                                           >> ${DEST}
-    echo "        usb_port =\"${I}\";"                            >> ${DEST}
-    echo "      };"                                               >> ${DEST}
-    echo "    };"                                                 >> ${DEST}
-    COUNT=$((${COUNT}+1))
-  done
-  echo "};"                                                       >> ${DEST}
+    # USB ports
+    COUNT=1
+    for I in `getUsbPorts`; do
+      echo "    usb_slot@${COUNT} {"                                >> ${DEST}
+      echo "      usb2 {"                                           >> ${DEST}
+      echo "        usb_port =\"${I}\";"                            >> ${DEST}
+      echo "      };"                                               >> ${DEST}
+      echo "      usb3 {"                                           >> ${DEST}
+      echo "        usb_port =\"${I}\";"                            >> ${DEST}
+      echo "      };"                                               >> ${DEST}
+      echo "    };"                                                 >> ${DEST}
+      COUNT=$((${COUNT}+1))
+    done
+    echo "};"                                                       >> ${DEST}
+  fi
   dtc -I dts -O dtb ${DEST} > /etc/model.dtb
   cp -fv /etc/model.dtb /run/model.dtb
   /usr/syno/bin/syno_slot_mapping
