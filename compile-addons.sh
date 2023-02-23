@@ -4,6 +4,7 @@ set -e
 
 TMP_PATH="/tmp"
 YQ_BIN="`dirname $0`/yq"
+TOOLKIT_VER="7.1"
 
 ###############################################################################
 #
@@ -144,9 +145,9 @@ function compile-addon() {
       rm -rf "${TMP_PATH}/${1}-mods"
       mkdir -p "${TMP_PATH}/${1}-mods"
 #      docker run --rm -t -v "${TMP_PATH}/${1}-mods":/output \
-#        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-toolkit:${PLATFORM}-7.1 compile-module
+#        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-toolkit:${PLATFORM}-${TOOLKIT_VER} compile-module
       docker run --rm -t --user `id -u` -v "${TMP_PATH}/${1}-mods":/output \
-        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-compiler compile-module ${PLATFORM}
+        -v "${PWD}/${1}/src/${KVER}":/input fbelavenuto/syno-compiler:${TOOLKIT_VER} compile-module ${PLATFORM}
       mkdir -p "${OUT_PATH}/${P}/root/modules"
       mv "${TMP_PATH}/${1}-mods/"*.ko "${OUT_PATH}/${P}/root/modules/"
       rm -rf "${TMP_PATH}/${1}-mods"
