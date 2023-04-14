@@ -1,6 +1,6 @@
 version: 1
-name: codecpatch
-description: "Patch synocodectool, by xbl3" #https://github.com/xbl3/synocodectool-patch
+name: nvmestorage
+description: "Enable NVMe as Storage - experimental"
 all:
   install-script: "install.sh"
   copy: "all"
