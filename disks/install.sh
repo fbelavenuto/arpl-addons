@@ -199,9 +199,10 @@ function nondtModel() {
   # sysfs is populated here
   SATA_PORTS=`ls /sys/class/ata_port | wc -w`
   [ -d '/sys/class/sas_phy' ] && SAS_PORTS=`ls /sys/class/sas_phy | wc -w`
-  NUMPORTS=$((${SATA_PORTS}+${SAS_PORTS}))
+  [ -d '/sys/class/scsi_disk' ] && SCSI_PORTS=`ls /sys/class/scsi_disk | wc -w`
+  NUMPORTS=$((${SATA_PORTS}+${SAS_PORTS}+${SCSI_PORTS}))
   # Max supported disks is 26
-  #[ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
+  [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
   _set_conf_kv rd "maxdisks" "${NUMPORTS}"
   INTPORTCFG="0x`printf "%x" $((2**${NUMPORTS}-1-${ESATAPORTCFG}))`"
   _set_conf_kv rd "internalportcfg" "${INTPORTCFG}"
