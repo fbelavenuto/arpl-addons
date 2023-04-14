@@ -5,7 +5,6 @@ all:
   install-script: "install.sh"
   copy: "all"
 available-for:
-  bromolow-3.10.108:
   apollolake-4.4.180:
   broadwell-4.4.180:
   broadwellnk-4.4.180:
@@ -13,4 +12,11 @@ available-for:
   geminilake-4.4.180:
   v1000-4.4.180:
   r1000-4.4.180:
+  apollolake-4.4.302:
+  broadwell-4.4.302:
+  broadwellnk-4.4.302:
+  denverton-4.4.302:
+  geminilake-4.4.302:
+  v1000-4.4.302:
+  r1000-4.4.302:
   epyc7002-5.10.55:
