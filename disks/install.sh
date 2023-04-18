@@ -25,6 +25,17 @@ function _set_conf_kv() {
   done
 }
 
+
+function _check_post_k() {
+  local ROOT
+  [ "$1" = "rd" ] && ROOT="" || ROOT="/tmpRoot"
+  if grep -q -r "^_set_conf_kv.*${2}.*" "${ROOT}/sbin/init.post"; then
+    return 0  # true
+  else
+    return 1  # false
+  fi
+}
+
 # Calculate # 0 bits
 function getNum0Bits() {
   local VALUE=$1
@@ -196,21 +207,33 @@ function nondtModel() {
   local INTPORTCFG
   local USBPORTCFG=$((`_get_conf_kv usbportcfg`))
   local COUNT=1
-  # sysfs is populated here
-  SATA_PORTS=`ls /sys/class/ata_port | wc -w`
-  [ -d '/sys/class/sas_phy' ] && SAS_PORTS=`ls /sys/class/sas_phy | wc -w`
-  [ -d '/sys/class/scsi_disk' ] && SCSI_PORTS=`ls /sys/class/scsi_disk | wc -w`
-  NUMPORTS=$((${SATA_PORTS}+${SAS_PORTS}+${SCSI_PORTS}))
-  # Max supported disks is 26
-  [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
-  _set_conf_kv rd "maxdisks" "${NUMPORTS}"
-  INTPORTCFG="0x`printf "%x" $((2**${NUMPORTS}-1-${ESATAPORTCFG}))`"
-  _set_conf_kv rd "internalportcfg" "${INTPORTCFG}"
-  # USB ports static, always 4 ports
-  USBPORT_IDX=`getNum0Bits ${USBPORTCFG}`
-  [ ${USBPORT_IDX} -lt ${NUMPORTS} ] && USBPORT_IDX=${NUMPORTS}
-  USBPORTCFG="0x`printf '%x' $((15*2**${USBPORT_IDX}))`"
-  _set_conf_kv rd "usbportcfg" "${USBPORTCFG}"
+  if _check_post_k "rd" "maxdisks"; then
+    NUMPORTS=$((`_get_conf_kv maxdisks`))
+  else
+    # sysfs is populated here
+    SATA_PORTS=`ls /sys/class/ata_port | wc -w`
+    [ -d '/sys/class/sas_phy' ] && SAS_PORTS=`ls /sys/class/sas_phy | wc -w`
+    [ -d '/sys/class/scsi_disk' ] && SCSI_PORTS=`ls /sys/class/scsi_disk | wc -w`
+    NUMPORTS=$((${SATA_PORTS}+${SAS_PORTS}))
+    # Max supported disks is 26
+    [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
+    _set_conf_kv rd "maxdisks" "${NUMPORTS}"
+    echo "set maxdisks=${NUMPORTS}"
+  fi
+  if ! _check_post_k "rd" "internalportcfg"; then
+    INTPORTCFG="0x`printf "%x" $((2**${NUMPORTS}-1-${ESATAPORTCFG}))`"
+    _set_conf_kv rd "internalportcfg" "${INTPORTCFG}"
+    echo "set internalportcfg=${INTPORTCFG}"
+    echo "get esataportcfg=${ESATAPORTCFG}"
+  fi
+  if ! _check_post_k "rd" "internalportcfg"; then
+    # USB ports static, always 4 ports
+    USBPORT_IDX=`getNum0Bits ${USBPORTCFG}`
+    [ ${USBPORT_IDX} -lt ${NUMPORTS} ] && USBPORT_IDX=${NUMPORTS}
+    USBPORTCFG="0x`printf '%x' $((15*2**${USBPORT_IDX}))`"
+    _set_conf_kv rd "usbportcfg" "${USBPORTCFG}"
+    echo "set usbportcfg=${USBPORTCFG}"
+  fi
   # NVME
   echo "[pci]" > /etc/extensionPorts
   chmod 755 /etc/extensionPorts
@@ -218,12 +241,6 @@ function nondtModel() {
     echo "pci${COUNT}=\"$P\"" >> /etc/extensionPorts
     COUNT=$((${COUNT}+1))
   done
-
-  # log
-  echo "maxdisks=${NUMPORTS}"
-  echo "internalportcfg=${INTPORTCFG}"
-  echo "esataportcfg=${ESATAPORTCFG}"
-  echo "usbportcfg=${USBPORTCFG}"
 }
 
 #
