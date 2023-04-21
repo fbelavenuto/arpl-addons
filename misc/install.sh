@@ -10,7 +10,7 @@ if [ "${1}" = "late" ]; then
   cp -vf /usr/bin/grub-editenv /tmpRoot/usr/bin
 
   mount -t sysfs sysfs /sys
-  modprobe acpi-cpufreq
+  /usr/sbin/modprobe acpi-cpufreq
   # CPU performance scaling
   if [ -f /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf ]; then
     CPUFREQ=`ls -ltr /sys/devices/system/cpu/cpufreq/* 2>/dev/null | wc -l`
@@ -21,6 +21,7 @@ if [ "${1}" = "late" ]; then
         echo "CPU supports CPU Performance Scaling, enabling"
         ${SED_PATH} -i 's/^# acpi-cpufreq/acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
         cp -vf /usr/lib/modules/cpufreq_* /tmpRoot/usr/lib/modules/
+        for cpu in $(seq 0 $(($(nproc) -1))) ; do echo sudo cpufreq-set -c $cpu -g ondemand ; done
     fi
   fi
   umount /sys
