@@ -5,6 +5,7 @@ if [ "${1}" = "jrExit" ]; then
 elif [ "${1}" = "late" ]; then
   echo "Creating service to exec CPUInfo"
   cp -v /usr/bin/cpuinfo.sh /tmpRoot/usr/bin/cpuinfo.sh
+  chmod 755 /tmpRoot/usr/sbin/cpuinfo.sh
   DEST="/tmpRoot/lib/systemd/system/cpuinfo.service"
   echo "[Unit]"                                                               > ${DEST}
   echo "Description=Enable CPUInfo Script"                                    >>${DEST}
