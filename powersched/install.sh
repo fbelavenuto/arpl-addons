@@ -1,5 +1,7 @@
 #!/usr/bin/env ash
 
+if [ `mount | grep tmpRoot | wc -l` -gt 0 ] ; then
+
 SED_PATH='/tmpRoot/usr/bin/sed'
 
 if [ "${1}" = "late" ]; then
