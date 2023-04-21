@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env ash
 # Updated 2023.03.05 - By FOXBI
 # htttps://github.com/foxbi/ch_cpuinfo
 ver="4.2.1-r01"
