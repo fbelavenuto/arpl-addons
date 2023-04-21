@@ -1,6 +1,6 @@
 #!/usr/bin/env ash
 
-if [ "${1}" = "patches" ]; then
+if [ "${1}" = "early" ]; then
   wait_time=10 # maximum wait time in seconds
 
   dump_all_partitions()
