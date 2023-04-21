@@ -261,15 +261,6 @@ function nondtModel() {
 
 
 if [ "$HASBOOTED" = "no" ]; then
-  echo "disks - early"
-  # fix executable flag
-  cp readlink /usr/bin/
-  cp dtc /usr/bin/
-  cp sed /usr/bin/
-  chmod +x /usr/bin/readlink
-  chmod +x /usr/bin/dtc
-  chmod +x /usr/bin/sed
-  
   echo "Adjust disks related configs automatically - patches"
   IS_DT=`_get_conf_kv supportportmappingv2`
   [ "${IS_DT}" = "yes" ] && dtModel || nondtModel
