@@ -1,4 +1,19 @@
 
+#!/usr/bin/env ash
+
+
+### USUALLY SCEMD is the last process run in init, so when scemd is running we are most
+# probably certain that system has finish init process
+#
+
+if [ `mount | grep tmpRoot | wc -l` -gt 0 ] ; then
+  HASBOOTED="yes"
+  echo "System passed junior"
+else
+  echo "System is booting"
+  HASBOOTED="no"
+fi
+
 PCI_ER="^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]{1}"
 
 # Get values in synoinfo.conf K=V file
@@ -143,11 +158,12 @@ function nvmePorts() {
 #
 function dtModel() {
   DEST="/addons/model.dts"
+  UNIQUE=`_get_conf_kv unique`
   if [ ! -f "${DEST}" ]; then  # Users can put their own dts.
     echo "/dts-v1/;"                                                 > ${DEST}
     echo "/ {"                                                      >> ${DEST}
     echo "    compatible = \"Synology\";"                           >> ${DEST}
-    echo "    model = \"${1}\";"                                    >> ${DEST}
+    echo "    model = \"${UNIQUE}\";"                               >> ${DEST}
     echo "    version = <0x01>;"                                    >> ${DEST}
     # SATA ports
     I=1
@@ -243,14 +259,31 @@ function nondtModel() {
   done
 }
 
-#
-if [ "${1}" = "patches" ]; then
-  echo "Adjust disks related configs automatically - patches"
-  [ "${2}" = "true" ] && dtModel ${3} || nondtModel
 
-elif [ "${1}" = "late" ]; then
+if [ "$HASBOOTED" = "no" ]; then
+  echo "disks - early"
+  # fix executable flag
+  cp readlink /usr/bin/
+  cp dtc /usr/bin/
+  cp sed /usr/bin/
+  chmod +x /usr/bin/readlink
+  chmod +x /usr/bin/dtc
+  chmod +x /usr/bin/sed
+  
+  echo "Adjust disks related configs automatically - patches"
+  IS_DT=`_get_conf_kv supportportmappingv2`
+  [ "${IS_DT}" = "yes" ] && dtModel || nondtModel
+
+elif [ "$HASBOOTED" = "yes" ]; then
   echo "Adjust disks related configs automatically - late"
-    if [ "${2}" = "true" ]; then
+  IS_DT=`_get_conf_kv supportportmappingv2`
+  if [ "${IS_DT}" = "yes" ]; then
+    echo "dtbpatch - late"
+    # copy utilities 
+    cp /usr/bin/readlink /tmpRoot/usr/bin
+    cp /usr/bin/dtc /tmpRoot/usr/bin
+    cp /usr/bin/sed /tmpRoot/usr/bin
+    
     echo "Copying /etc.defaults/model.dtb"
     # copy file
     cp -vf /etc/model.dtb /tmpRoot/etc/model.dtb
