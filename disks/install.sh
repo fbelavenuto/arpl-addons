@@ -1,25 +1,10 @@
 
-#!/usr/bin/env ash
-
-
-### USUALLY SCEMD is the last process run in init, so when scemd is running we are most
-# probably certain that system has finish init process
-#
-
-if [ `mount | grep tmpRoot | wc -l` -gt 0 ] ; then
-  HASBOOTED="yes"
-  echo "System passed junior"
-else
-  echo "System is booting"
-  HASBOOTED="no"
-fi
-
 PCI_ER="^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]{1}"
 
 # Get values in synoinfo.conf K=V file
 # 1 - key
 function _get_conf_kv() {
-  grep "${1}" /etc/synoinfo.conf | sed "s|^${1}=\"\(.*\)\"$|\1|g"
+  grep "${1}=" /etc/synoinfo.conf | sed "s|^${1}=\"\(.*\)\"$|\1|g"
 }
 
 # Replace/add values in synoinfo.conf K=V file
@@ -40,7 +25,8 @@ function _set_conf_kv() {
   done
 }
 
-
+# Check if the user has customized the key
+# Args: $1 rd|hd, $2 key
 function _check_post_k() {
   local ROOT
   [ "$1" = "rd" ] && ROOT="" || ROOT="/tmpRoot"
@@ -49,6 +35,23 @@ function _check_post_k() {
   else
     return 1  # false
   fi
+}
+
+# Check if the raid has been completed currently
+function _check_rootraidstatus() {
+  if [ "`_get_conf_kv supportraid`" != "yes" ]; then
+    return 0
+  fi
+  State=$(cat /sys/block/md0/md/array_state) 2>/dev/null
+  if [ $? != 0 ]; then
+    return 1
+  fi
+  case ${State} in
+    "clear" | "inactive" | "suspended " | "readonly" | "read-auto")
+    return 1
+  ;;
+  esac
+  return 0
 }
 
 # Calculate # 0 bits
@@ -158,12 +161,11 @@ function nvmePorts() {
 #
 function dtModel() {
   DEST="/addons/model.dts"
-  UNIQUE=`_get_conf_kv unique`
   if [ ! -f "${DEST}" ]; then  # Users can put their own dts.
     echo "/dts-v1/;"                                                 > ${DEST}
     echo "/ {"                                                      >> ${DEST}
     echo "    compatible = \"Synology\";"                           >> ${DEST}
-    echo "    model = \"${UNIQUE}\";"                               >> ${DEST}
+    echo "    model = \"${1}\";"                                    >> ${DEST}
     echo "    version = <0x01>;"                                    >> ${DEST}
     # SATA ports
     I=1
@@ -225,16 +227,20 @@ function nondtModel() {
   local COUNT=1
   if _check_post_k "rd" "maxdisks"; then
     NUMPORTS=$((`_get_conf_kv maxdisks`))
+    echo "get maxdisks=${NUMPORTS}"
   else
     # sysfs is populated here
     SATA_PORTS=`ls /sys/class/ata_port | wc -w`
-    [ -d '/sys/class/sas_phy' ] && SAS_PORTS=`ls /sys/class/sas_phy | wc -w`
     [ -d '/sys/class/scsi_disk' ] && SCSI_PORTS=`ls /sys/class/scsi_disk | wc -w`
     NUMPORTS=$((${SATA_PORTS}+${SAS_PORTS}+${SCSI_PORTS}))
-    # Max supported disks is 26
-    [ ${NUMPORTS} -gt 26 ] && NUMPORTS=26
-    _set_conf_kv rd "maxdisks" "${NUMPORTS}"
-    echo "set maxdisks=${NUMPORTS}"
+    # Raidtool will read maxdisks, but when maxdisks is greater than 27, formatting error will occur 8%.
+    if ! _check_rootraidstatus && [ ${NUMPORTS} -gt 26 ]; then
+      _set_conf_kv rd "maxdisks" "26"
+      echo "set maxdisks=26"
+    else
+      _set_conf_kv rd "maxdisks" "${NUMPORTS}"
+      echo "set maxdisks=${NUMPORTS}"
+    fi
   fi
   if ! _check_post_k "rd" "internalportcfg"; then
     INTPORTCFG="0x`printf "%x" $((2**${NUMPORTS}-1-${ESATAPORTCFG}))`"
@@ -259,22 +265,14 @@ function nondtModel() {
   done
 }
 
-
-if [ "$HASBOOTED" = "no" ]; then
+#
+if [ "${1}" = "patches" ]; then
   echo "Adjust disks related configs automatically - patches"
-  IS_DT=`_get_conf_kv supportportmappingv2`
-  [ "${IS_DT}" = "yes" ] && dtModel || nondtModel
+  [ "${2}" = "true" ] && dtModel ${3} || nondtModel
 
-elif [ "$HASBOOTED" = "yes" ]; then
+elif [ "${1}" = "late" ]; then
   echo "Adjust disks related configs automatically - late"
-  IS_DT=`_get_conf_kv supportportmappingv2`
-  if [ "${IS_DT}" = "yes" ]; then
-    echo "dtbpatch - late"
-    # copy utilities 
-    cp /usr/bin/readlink /tmpRoot/usr/bin
-    cp /usr/bin/dtc /tmpRoot/usr/bin
-    cp /usr/bin/sed /tmpRoot/usr/bin
-    
+    if [ "${2}" = "true" ]; then
     echo "Copying /etc.defaults/model.dtb"
     # copy file
     cp -vf /etc/model.dtb /tmpRoot/etc/model.dtb
