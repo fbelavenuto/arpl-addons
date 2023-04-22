@@ -21,7 +21,6 @@ if [ "${1}" = "late" ]; then
         echo "CPU supports CPU Performance Scaling, enabling"
         ${SED_PATH} -i 's/^# acpi-cpufreq/acpi-cpufreq/g' /tmpRoot/usr/lib/modules-load.d/70-cpufreq-kernel.conf
         cp -vf /usr/lib/modules/cpufreq_* /tmpRoot/usr/lib/modules/
-        for cpu in $(seq 0 $(($(nproc) -1))) ; do echo sudo cpufreq-set -c $cpu -g ondemand ; done
     fi
   fi
   umount /sys
