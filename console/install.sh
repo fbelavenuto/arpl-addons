@@ -25,7 +25,7 @@ elif [ "${1}" = "rcExit" ]; then
   echo -e "Junior mode\n" > /etc/issue
   echo "Starting getty..."
   /usr/sbin/getty -L 0 tty1 &
-  /usr/bin/loadkeys /usr/share/keymaps/i386/${LAYOUT}/${KEYMAP}.map.gz
+  /usr/bin/loadkeys /usr/share/keymaps/i386/${LAYOUT:-qwertz}/${KEYMAP:-de}.map.gz
   # Workaround for DVA1622
   if [ "${MODEL}" = "DVA1622" ]; then
     echo > /dev/tty2
@@ -50,7 +50,7 @@ elif [ "${1}" = "late" ]; then
   echo "[Service]"                                                            >>${DEST}
   echo "Type=oneshot"                                                         >>${DEST}
   echo "RemainAfterExit=true"                                                 >>${DEST}
-  echo "ExecStart=/usr/bin/loadkeys /usr/share/keymaps/i386/${LAYOUT}/${KEYMAP}.map.gz" >>${DEST}
+  echo "ExecStart=/usr/bin/loadkeys /usr/share/keymaps/i386/${LAYOUT:-qwertz}/${KEYMAP:-de}.map.gz" >>${DEST}
   echo                                                                        >>${DEST}
   echo "[Install]"                                                            >>${DEST}
   echo "WantedBy=multi-user.target"                                           >>${DEST}
