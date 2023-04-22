@@ -183,6 +183,11 @@ function dtModel() {
       I=$((${I}+1))
     done
     NUMPORTS=$((${I}-1))
+    if [ $NUMPORTS -eq 1 ]; then
+      # fix isSingleBay issue:
+      #   if maxdisks is 1, there is no create button in the storage panel
+      NUMPORTS=2
+    fi
     _set_conf_kv rd "maxdisks" "${NUMPORTS}"
     echo "maxdisks=${NUMPORTS}"
 
@@ -272,7 +277,7 @@ if [ "${1}" = "patches" ]; then
 
 elif [ "${1}" = "late" ]; then
   echo "Adjust disks related configs automatically - late"
-    if [ "${2}" = "true" ]; then
+  if [ "${2}" = "true" ]; then
     echo "Copying /etc.defaults/model.dtb"
     # copy file
     cp -vf /etc/model.dtb /tmpRoot/etc/model.dtb
