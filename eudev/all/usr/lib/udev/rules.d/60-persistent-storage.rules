@@ -37,14 +37,30 @@ KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ATTRS{serial}=="?*", ENV{ID_S
 KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ATTRS{wwid}=="?*", ENV{ID_WWN}="$attr{wwid}"
 KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ATTRS{model}=="?*", ENV{ID_MODEL}="$attr{model}"
 KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ATTRS{firmware_rev}=="?*", ENV{ID_REVISION}="$attr{firmware_rev}"
+KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ATTRS{nsid}=="?*", ENV{ID_NSID}="$attr{nsid}"
+# obsolete symlink with non-escaped characters, kept for backward compatibility
+KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", \
+  ENV{ID_MODEL}!="*/*", ENV{ID_SERIAL_SHORT}!="*/*", \
+  ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}"
+# obsolete symlink that might get overridden on adding a new nvme controller, kept for backward compatibility
 KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", \
   OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}"
+KERNEL=="nvme*[0-9]n*[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", ENV{ID_NSID}=="?*", \
+  OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}_$env{ID_NSID}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}"
 
 KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ATTRS{serial}=="?*", ENV{ID_SERIAL_SHORT}="$attr{serial}"
 KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ATTRS{model}=="?*", ENV{ID_MODEL}="$attr{model}"
 KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ATTRS{firmware_rev}=="?*", ENV{ID_REVISION}="$attr{firmware_rev}"
+KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ATTRS{nsid}=="?*", ENV{ID_NSID}="$attr{nsid}"
+# obsolete symlink with non-escaped characters, kept for backward compatibility
+KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", \
+  ENV{ID_MODEL}!="*/*", ENV{ID_SERIAL_SHORT}!="*/*", \
+  ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}-part%n"
+# obsolete symlink that might get overridden on adding a new nvme controller, kept for backward compatibility
 KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", \
   OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}-part%n"
+KERNEL=="nvme*[0-9]n*[0-9]p*[0-9]", ENV{DEVTYPE}=="partition", ENV{ID_MODEL}=="?*", ENV{ID_SERIAL_SHORT}=="?*", ENV{ID_NSID}=="?*", \
+  OPTIONS="string_escape=replace", ENV{ID_SERIAL}="$env{ID_MODEL}_$env{ID_SERIAL_SHORT}_$env{ID_NSID}", SYMLINK+="disk/by-id/nvme-$env{ID_SERIAL}-part%n"
 
 # virtio-blk
 KERNEL=="vd*[!0-9]", ATTRS{serial}=="?*", ENV{ID_SERIAL}="$attr{serial}", SYMLINK+="disk/by-id/virtio-$env{ID_SERIAL}"
@@ -59,14 +75,20 @@ KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="scsi", ATTRS{type}==
 # Run ata_id on non-removable USB Mass Storage (SATA/PATA disks in enclosures)
 KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", ATTR{removable}=="0", SUBSYSTEMS=="usb", IMPORT{program}="ata_id --export $devnode"
 
-# Fall back usb_id for USB devices
-KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", SUBSYSTEMS=="usb", IMPORT{builtin}="usb_id"
+# Also import properties from usb_id for USB devices
+KERNEL=="sd*[!0-9]|sr*", SUBSYSTEMS=="usb", IMPORT{builtin}="usb_id"
 
 # SCSI devices
-KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --whitelisted -d $devnode", ENV{ID_BUS}="scsi"
-KERNEL=="cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --whitelisted -d $devnode", ENV{ID_BUS}="cciss"
+KERNEL=="sd*[!0-9]|sr*", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --allowlisted -d $devnode", ENV{ID_BUS}="scsi"
+KERNEL=="cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}!="?*", IMPORT{program}="scsi_id --export --allowlisted -d $devnode", ENV{ID_BUS}="cciss"
 KERNEL=="sd*|sr*|cciss*", ENV{DEVTYPE}=="disk", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}"
 KERNEL=="sd*|cciss*", ENV{DEVTYPE}=="partition", ENV{ID_SERIAL}=="?*", SYMLINK+="disk/by-id/$env{ID_BUS}-$env{ID_SERIAL}-part%n"
+# Previously, ata_id in the above might not be able to retrieve attributes correctly,
+# and properties from usb_id were used as a fallback. See issue #24921 and PR #24923.
+# To keep backward compatibility, still we need to create symlinks based on USB serial.
+# See issue #25179.
+KERNEL=="sd*|sr*|cciss*", ENV{DEVTYPE}=="disk", ENV{ID_USB_SERIAL}=="?*", SYMLINK+="disk/by-id/usb-$env{ID_USB_SERIAL}"
+KERNEL=="sd*|cciss*", ENV{DEVTYPE}=="partition", ENV{ID_USB_SERIAL}=="?*", SYMLINK+="disk/by-id/usb-$env{ID_USB_SERIAL}-part%n"
 
 # PMEM devices
 KERNEL=="pmem*", ENV{DEVTYPE}=="disk", ATTRS{uuid}=="?*", SYMLINK+="disk/by-id/pmem-$attr{uuid}"
@@ -88,6 +110,7 @@ KERNEL=="msblk[0-9]p[0-9]|mspblk[0-9]p[0-9]", ENV{ID_NAME}=="?*", ENV{ID_SERIAL}
 
 # by-path
 ENV{DEVTYPE}=="disk", DEVPATH!="*/virtual/*", IMPORT{builtin}="path_id"
+ENV{DEVTYPE}=="disk", SUBSYSTEMS=="nvme-subsystem", IMPORT{builtin}="path_id"
 KERNEL=="mmcblk[0-9]boot[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_PATH}=="?*", SYMLINK+="disk/by-path/$env{ID_PATH}-boot%n"
 KERNEL!="mmcblk[0-9]boot[0-9]", ENV{DEVTYPE}=="disk", ENV{ID_PATH}=="?*", SYMLINK+="disk/by-path/$env{ID_PATH}"
 ENV{DEVTYPE}=="partition", ENV{ID_PATH}=="?*", SYMLINK+="disk/by-path/$env{ID_PATH}-part%n"
@@ -99,6 +122,10 @@ ENV{DEVTYPE}=="partition", ENV{ID_PATH_ATA_COMPAT}=="?*", SYMLINK+="disk/by-path
 KERNEL=="vd*[!0-9]", ENV{ID_PATH}=="pci-*", SYMLINK+="disk/by-path/virtio-$env{ID_PATH}"
 KERNEL=="vd*[0-9]", ENV{ID_PATH}=="pci-*", SYMLINK+="disk/by-path/virtio-$env{ID_PATH}-part%n"
 
+{% if HAVE_BLKID %}
+# allow admin to disable probing the filesystem for slow devices like floppy disk drives
+ENV{UDEV_DISABLE_PERSISTENT_STORAGE_BLKID_FLAG}=="1", GOTO="persistent_storage_blkid_probe_end"
+
 # probe filesystem metadata of optical drives which have a media inserted
 KERNEL=="sr*", ENV{DISK_EJECT_REQUEST}!="?*", ENV{ID_CDROM_MEDIA_TRACK_COUNT_DATA}=="?*", ENV{ID_CDROM_MEDIA_SESSION_LAST_OFFSET}=="?*", \
   IMPORT{builtin}="blkid --hint=session_offset=$env{ID_CDROM_MEDIA_SESSION_LAST_OFFSET}"
@@ -108,6 +135,9 @@ KERNEL=="sr*", ENV{DISK_EJECT_REQUEST}!="?*", ENV{ID_CDROM_MEDIA_TRACK_COUNT_DAT
 
 # probe filesystem metadata of disks
 KERNEL!="sr*|mmcblk[0-9]boot[0-9]", IMPORT{builtin}="blkid"
+
+LABEL="persistent_storage_blkid_probe_end"
+{% endif %}
 
 # by-label/by-uuid links (filesystem metadata)
 ENV{ID_FS_USAGE}=="filesystem|other|crypto", ENV{ID_FS_UUID_ENC}=="?*", SYMLINK+="disk/by-uuid/$env{ID_FS_UUID_ENC}"
@@ -124,6 +154,18 @@ ENV{ID_PART_ENTRY_SCHEME}=="gpt", ENV{ID_PART_ENTRY_NAME}=="?*", SYMLINK+="disk/
 # by-diskseq link (if an app is told to open a path like this, they may parse
 # the diskseq number from the path, then issue BLKGETDISKSEQ to verify they really got
 # the right device, to access specific disks in a race-free fashion)
-ENV{DISKSEQ}=="?*", ENV{DEVTYPE}!="partition", SYMLINK+="disk/by-diskseq/$env{DISKSEQ}"
+ENV{DISKSEQ}=="?*", ENV{DEVTYPE}!="partition", ENV{ID_IGNORE_DISKSEQ}!="1", SYMLINK+="disk/by-diskseq/$env{DISKSEQ}"
+ENV{DISKSEQ}=="?*", ENV{DEVTYPE}=="partition", ENV{ID_IGNORE_DISKSEQ}!="1", SYMLINK+="disk/by-diskseq/$env{DISKSEQ}-part%n"
+
+# Create symlinks that allow referencing loopback devices by their backing file's inode number
+ENV{DEVTYPE}!="partition", ENV{ID_LOOP_BACKING_DEVICE}!="", ENV{ID_LOOP_BACKING_INODE}!="", SYMLINK+="loop/by-inode/$env{ID_LOOP_BACKING_DEVICE}-$env{ID_LOOP_BACKING_INODE}"
+ENV{DEVTYPE}=="partition", ENV{ID_LOOP_BACKING_DEVICE}!="", ENV{ID_LOOP_BACKING_INODE}!="", SYMLINK+="loop/by-inode/$env{ID_LOOP_BACKING_DEVICE}-$env{ID_LOOP_BACKING_INODE}-part%n"
+
+# Similar, but uses the .lo_file_name field of the loopback device (note that
+# this is basically just a free-form string passed from userspace to the kernel
+# when the device is created, it is not necessarily a file system path like the
+# "loop/backing_file" sysfs attribute, which is always an absolute path)
+ENV{DEVTYPE}!="partition", ENV{ID_LOOP_BACKING_FILENAME_ENC}!="", SYMLINK+="loop/by-ref/$env{ID_LOOP_BACKING_FILENAME_ENC}"
+ENV{DEVTYPE}=="partition", ENV{ID_LOOP_BACKING_FILENAME_ENC}!="", SYMLINK+="loop/by-ref/$env{ID_LOOP_BACKING_FILENAME_ENC}-part%n"
 
 LABEL="persistent_storage_end"
