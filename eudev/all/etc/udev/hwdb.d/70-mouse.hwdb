@@ -6,6 +6,11 @@
 # The lookup keys are composed in:
 #   70-mouse.rules
 #
+# Note: The format of the "mouse:" prefix match key is a contract between the
+# rules file and the hardware data, it might change in later revisions to
+# support more or better matches, it is not necessarily expected to be a stable
+# ABI.
+#
 # Match key format:
 # mouse:<subsystem>:v<vid>p<pid>:name:<name>:
 #
@@ -154,29 +159,12 @@ mouse:bluetooth:v05acp030d:name:*:*
  MOUSE_DPI=1300@1000
 
 ##########################################
-# Cherry
-##########################################
-
-# Cherry MW 2310
-mouse:usb:v1A81p1701:name:G-Tech Wireless Dongle Mouse:*
- KEYBOARD_KEY_90005=back
- KEYBOARD_KEY_90004=forward
-
-##########################################
 # Chicony
 ##########################################
 
 # Chicony 2.4G Multimedia Wireless Kit MG-0919
 mouse:usb:v04f2p0963:name:Chicony 2.4G Multimedia Wireless Kit:*
  MOUSE_DPI=1000@142
-
-##########################################
-# CST
-##########################################
-
-# CST Laser Trackball
-mouse:usb:v5332p1400:name:Clearly Superior Technologies. CST Laser Trackball:*
- MOUSE_DPI=400@1000 *800@1000 1600@1000
 
 ##########################################
 # Dell
@@ -209,17 +197,6 @@ mouse:usb:v0461p4d46:name:USB Optical Mouse:*
 # Elecom HUGE TrackBall (M-HT1DR)
 mouse:usb:v056ep010d:name:ELECOM TrackBall Mouse HUGE TrackBall:*
  MOUSE_DPI=500@125 *1000@125 1500@125
-
-# Elecom DEFT Pro TrackBall (M-DPT1MR)
-mouse:usb:v056ep0131:name:ELECOM TrackBall Mouse DEFT Pro TrackBall Mouse:*
- MOUSE_DPI=*500 1000 1500
- MOUSE_WHEEL_CLICK_ANGLE=10
-
-# Elecom Relacon (M-RT1DR)
-mouse:usb:v056ep0155:name:ELECOM ELECOM Relacon:*
- ID_INPUT_TRACKBALL=1
- MOUSE_DPI=*500 1000 1500
- MOUSE_WHEEL_CLICK_ANGLE=30
 
 ##########################################
 # Fujitsu Siemens
@@ -395,14 +372,6 @@ mouse:usb:v046dpc332:name:Logitech Gaming Mouse G502:*
 mouse:usb:v046dpc08b:name:Logitech G502 HERO SE:*
 # Logitech G502 Hero
 mouse:usb:v046dpc08b:name:Logitech G502 HERO Gaming Mouse:*
- MOUSE_DPI=1200@1000 *2400@1000 3200@1000 6400@1000
-
-# Logitech G502 X (Wired)
-mouse:usb:v046dpc098:name:Logitech, Inc. G502 X LIGHTSPEED:*
-# Logitech G502 X (Wireless)
-# The USB receiver is also used by other mice. See #27118.
-# If you want to enable the entry, please copy below to your custom hwdb file.
-#mouse:usb:v046dpc547:name:Logitech USB Receiver:*
  MOUSE_DPI=1200@1000 *2400@1000 3200@1000 6400@1000
 
 # Logitech G700 Laser Mouse (Wired)

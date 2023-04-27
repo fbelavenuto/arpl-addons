@@ -51,9 +51,6 @@ acpi:ATML*:
 acpi:AUTH*:
  ID_VENDOR_FROM_DATABASE=AuthenTec
 
-acpi:AWDZ*:
- ID_VENDOR_FROM_DATABASE=Shanghai Aiwei Electronic Technology Co., Ltd.
-
 acpi:BABA*:
  ID_VENDOR_FROM_DATABASE=Alibaba Co., Ltd.
 
@@ -65,9 +62,6 @@ acpi:BOSC*:
 
 acpi:BRCM*:
  ID_VENDOR_FROM_DATABASE=Broadcom Corporation
-
-acpi:CIXH*:
- ID_VENDOR_FROM_DATABASE=Cix Technology (Shanghai) Co., Ltd.
 
 acpi:CMHR*:
  ID_VENDOR_FROM_DATABASE=COMHEAR, INC.
@@ -102,14 +96,8 @@ acpi:DSUO*:
 acpi:ELAN*:
  ID_VENDOR_FROM_DATABASE=ELAN MICROELECTRONICS CORPORATION
 
-acpi:ELAS*:
- ID_VENDOR_FROM_DATABASE=Elliptic Laboratories AS
-
 acpi:ESSX*:
  ID_VENDOR_FROM_DATABASE=Everest Semiconductor Co., Ltd.
-
-acpi:ETDS*:
- ID_VENDOR_FROM_DATABASE=EyeTech Digital Systems
 
 acpi:EXAR*:
  ID_VENDOR_FROM_DATABASE=Exar Corporation
@@ -131,9 +119,6 @@ acpi:GHSW*:
 
 acpi:GOOG*:
  ID_VENDOR_FROM_DATABASE=Google, Inc.
-
-acpi:GOUP*:
- ID_VENDOR_FROM_DATABASE=GoUp Co.,Ltd
 
 acpi:GTCH*:
  ID_VENDOR_FROM_DATABASE=G2touch Co., LTD
@@ -195,9 +180,6 @@ acpi:IP3T*:
 acpi:IPHI*:
  ID_VENDOR_FROM_DATABASE=Inphi Corporation
 
-acpi:JMIC*:
- ID_VENDOR_FROM_DATABASE=Shenzhen Jaguar Microsystems Co.,Ltd.
-
 acpi:JSYS*:
  ID_VENDOR_FROM_DATABASE=Juniper Systems, Inc.
 
@@ -213,14 +195,8 @@ acpi:LNUX*:
 acpi:LOON*:
  ID_VENDOR_FROM_DATABASE=Loongson Technology Corporation Limited
 
-acpi:LTSC*:
- ID_VENDOR_FROM_DATABASE=Lontium Semiconductor Corporation
-
 acpi:MCHP*:
  ID_VENDOR_FROM_DATABASE=Microchip Technology Inc
-
-acpi:MCRY*:
- ID_VENDOR_FROM_DATABASE=Micro Crystal AG
 
 acpi:MIPI*:
  ID_VENDOR_FROM_DATABASE=MIPI Alliance
@@ -239,9 +215,6 @@ acpi:MSHW*:
 
 acpi:MXIM*:
  ID_VENDOR_FROM_DATABASE=Maxim Integrated
-
-acpi:NOLO*:
- ID_VENDOR_FROM_DATABASE=NOLO Co., Ltd.
 
 acpi:NVDA*:
  ID_VENDOR_FROM_DATABASE=Nvidia
@@ -297,9 +270,6 @@ acpi:SECC*:
 acpi:SHRP*:
  ID_VENDOR_FROM_DATABASE=Sharp Corporation
 
-acpi:SILC*:
- ID_VENDOR_FROM_DATABASE=Silicom Ltd. Connectivity Solutions
-
 acpi:SNSL*:
  ID_VENDOR_FROM_DATABASE=Sensel, Inc.
 
@@ -335,9 +305,6 @@ acpi:VFSI*:
 
 acpi:VSHY*:
  ID_VENDOR_FROM_DATABASE=Vishay Intertechnology, Inc.
-
-acpi:WACF*:
- ID_VENDOR_FROM_DATABASE=Wacom Technology
 
 acpi:WCOM*:
  ID_VENDOR_FROM_DATABASE=Wacom
@@ -605,9 +572,6 @@ acpi:AKM*:
 
 acpi:AKP*:
  ID_VENDOR_FROM_DATABASE=Atom Komplex Prylad
-
-acpi:AKR*:
- ID_VENDOR_FROM_DATABASE=Anker Innovations Limited
 
 acpi:AKY*:
  ID_VENDOR_FROM_DATABASE=Askey Computer Corporation
@@ -939,9 +903,6 @@ acpi:ATV*:
 acpi:ATX*:
  ID_VENDOR_FROM_DATABASE=Athenix Corporation
 
-acpi:AUD*:
- ID_VENDOR_FROM_DATABASE=AudioControl
-
 acpi:AUG*:
  ID_VENDOR_FROM_DATABASE=August Home, Inc.
 
@@ -1098,9 +1059,6 @@ acpi:BCD*:
 acpi:BCI*:
  ID_VENDOR_FROM_DATABASE=Broadata Communications Inc.
 
-acpi:BCK*:
- ID_VENDOR_FROM_DATABASE=Beck GmbH & Co. Elektronik Bauelemente KG
-
 acpi:BCM*:
  ID_VENDOR_FROM_DATABASE=Broadcom
 
@@ -1151,9 +1109,6 @@ acpi:BIA*:
 
 acpi:BIC*:
  ID_VENDOR_FROM_DATABASE=Big Island Communications
-
-acpi:BIG*:
- ID_VENDOR_FROM_DATABASE=Bigscreen, Inc.
 
 acpi:BII*:
  ID_VENDOR_FROM_DATABASE=Boeckeler Instruments Inc
@@ -1291,7 +1246,7 @@ acpi:BUL*:
  ID_VENDOR_FROM_DATABASE=Bull
 
 acpi:BUR*:
- ID_VENDOR_FROM_DATABASE=B&R Industrial Automation GmbH
+ ID_VENDOR_FROM_DATABASE=Bernecker & Rainer Ind-Eletronik GmbH
 
 acpi:BUS*:
  ID_VENDOR_FROM_DATABASE=BusTek
@@ -2262,9 +2217,6 @@ acpi:DYN*:
 acpi:DYX*:
  ID_VENDOR_FROM_DATABASE=Dynax Electronics (HK) Ltd
 
-acpi:EAC*:
- ID_VENDOR_FROM_DATABASE=Emotiva Audio Corp.
-
 acpi:EAG*:
  ID_VENDOR_FROM_DATABASE=ELTEC Elektronik AG
 
@@ -2512,7 +2464,7 @@ acpi:ESA*:
  ID_VENDOR_FROM_DATABASE=Elbit Systems of America
 
 acpi:ESB*:
- ID_VENDOR_FROM_DATABASE=ScioTeq
+ ID_VENDOR_FROM_DATABASE=Esterline Belgium BVBA
 
 acpi:ESC*:
  ID_VENDOR_FROM_DATABASE=Eden Sistemas de Computacao S/A
@@ -2550,9 +2502,6 @@ acpi:ETC*:
 acpi:ETD*:
  ID_VENDOR_FROM_DATABASE=ELAN MICROELECTRONICS CORPORATION
 
-acpi:ETG*:
- ID_VENDOR_FROM_DATABASE=Eizo Technologies GmbH
-
 acpi:ETH*:
  ID_VENDOR_FROM_DATABASE=Etherboot Project
 
@@ -2579,9 +2528,6 @@ acpi:EVE*:
 
 acpi:EVI*:
  ID_VENDOR_FROM_DATABASE=eviateg GmbH
-
-acpi:EVP*:
- ID_VENDOR_FROM_DATABASE=EverPro Technologies Company Limited
 
 acpi:EVX*:
  ID_VENDOR_FROM_DATABASE=Everex
@@ -3051,9 +2997,6 @@ acpi:GTT*:
 acpi:GUD*:
  ID_VENDOR_FROM_DATABASE=Guntermann & Drunck GmbH
 
-acpi:GUP*:
- ID_VENDOR_FROM_DATABASE=GoUp Co.,Ltd
-
 acpi:GUZ*:
  ID_VENDOR_FROM_DATABASE=Guzik Technical Enterprises
 
@@ -3063,9 +3006,6 @@ acpi:GVC*:
 acpi:GVL*:
  ID_VENDOR_FROM_DATABASE=Global Village Communication
 
-acpi:GVS*:
- ID_VENDOR_FROM_DATABASE=G.VISION
-
 acpi:GWI*:
  ID_VENDOR_FROM_DATABASE=GW Instruments
 
@@ -3074,9 +3014,6 @@ acpi:GWK*:
 
 acpi:GWY*:
  ID_VENDOR_FROM_DATABASE=Gateway 2000
-
-acpi:GXL*:
- ID_VENDOR_FROM_DATABASE=Galaxy Microsystems Ltd.
 
 acpi:GZE*:
  ID_VENDOR_FROM_DATABASE=GUNZE Limited
@@ -3540,9 +3477,6 @@ acpi:IMP*:
 acpi:IMT*:
  ID_VENDOR_FROM_DATABASE=Inmax Technology Corporation
 
-acpi:IMX*:
- ID_VENDOR_FROM_DATABASE=arpara Technology Co., Ltd.
-
 acpi:IMS*:
  ID_VENDOR_FROM_DATABASE=Integrated Micro Solution Inc.
 
@@ -3924,9 +3858,6 @@ acpi:KIO*:
 acpi:KIS*:
  ID_VENDOR_FROM_DATABASE=KiSS Technology A/S
 
-acpi:KLT*:
- ID_VENDOR_FROM_DATABASE=Colorlight
-
 acpi:KMC*:
  ID_VENDOR_FROM_DATABASE=Mitsumi Company Ltd
 
@@ -3959,9 +3890,6 @@ acpi:KOL*:
 
 acpi:KOM*:
  ID_VENDOR_FROM_DATABASE=Kontron GmbH
-
-acpi:KOP*:
- ID_VENDOR_FROM_DATABASE=Kopin Corporation
 
 acpi:KOU*:
  ID_VENDOR_FROM_DATABASE=KOUZIRO Co.,Ltd.
@@ -4133,9 +4061,6 @@ acpi:LEX*:
 
 acpi:LGC*:
  ID_VENDOR_FROM_DATABASE=Logic Ltd
-
-acpi:LGD*:
- ID_VENDOR_FROM_DATABASE=LG Display
 
 acpi:LGD*:
  ID_VENDOR_FROM_DATABASE=LG Display
@@ -4336,7 +4261,7 @@ acpi:MAS*:
  ID_VENDOR_FROM_DATABASE=Mass Inc.
 
 acpi:MAT*:
- ID_VENDOR_FROM_DATABASE=Panasonic Connect Co.,Ltd.
+ ID_VENDOR_FROM_DATABASE=Matsushita Electric Ind. Company Ltd
 
 acpi:MAX*:
  ID_VENDOR_FROM_DATABASE=Rogen Tech Distribution Inc
@@ -4698,9 +4623,6 @@ acpi:MRC*:
 acpi:MRD*:
  ID_VENDOR_FROM_DATABASE=MicroDisplay Corporation
 
-acpi:MRG*:
- ID_VENDOR_FROM_DATABASE=Nreal
-
 acpi:MRK*:
  ID_VENDOR_FROM_DATABASE=Maruko & Company Ltd
 
@@ -4857,9 +4779,6 @@ acpi:MXI*:
 acpi:MXL*:
  ID_VENDOR_FROM_DATABASE=Hitachi Maxell, Ltd.
 
-acpi:MXM*:
- ID_VENDOR_FROM_DATABASE=C&T Solution Inc.
-
 acpi:MXP*:
  ID_VENDOR_FROM_DATABASE=Maxpeed Corporation
 
@@ -4940,9 +4859,6 @@ acpi:NCS*:
 
 acpi:NCT*:
  ID_VENDOR_FROM_DATABASE=NEC CustomTechnica, Ltd.
-
-acpi:NCV*:
- ID_VENDOR_FROM_DATABASE=NewCoSemi (Beijing) Technology CO.,Ltd.
 
 acpi:NDC*:
  ID_VENDOR_FROM_DATABASE=National DataComm Corporaiton
@@ -5133,12 +5049,6 @@ acpi:NVI*:
 acpi:NVL*:
  ID_VENDOR_FROM_DATABASE=Novell Inc
 
-acpi:NVO*:
- ID_VENDOR_FROM_DATABASE=Netvio Ltd.
-
-acpi:NVR*:
- ID_VENDOR_FROM_DATABASE=NOLO CO., LTD.
-
 acpi:NVT*:
  ID_VENDOR_FROM_DATABASE=Navatek Engineering Corporation
 
@@ -5165,9 +5075,6 @@ acpi:NXP*:
 
 acpi:NXQ*:
  ID_VENDOR_FROM_DATABASE=Nexiq Technologies, Inc.
-
-acpi:NXR*:
- ID_VENDOR_FROM_DATABASE=Nextorage Corporation
 
 acpi:NXS*:
  ID_VENDOR_FROM_DATABASE=Technology Nexus Secure Open Systems AB
@@ -5207,9 +5114,6 @@ acpi:OEC*:
 
 acpi:OEI*:
  ID_VENDOR_FROM_DATABASE=Optum Engineering Inc.
-
-acpi:OFI*:
- ID_VENDOR_FROM_DATABASE=Jiangxi Jinghao Optical Co., Ltd.
 
 acpi:OHW*:
  ID_VENDOR_FROM_DATABASE=M-Labs Limited
@@ -5348,9 +5252,6 @@ acpi:OYO*:
 
 acpi:OZC*:
  ID_VENDOR_FROM_DATABASE=OZ Corporation
-
-acpi:OZD*:
- ID_VENDOR_FROM_DATABASE=OZO Co.Ltd
 
 acpi:OZO*:
  ID_VENDOR_FROM_DATABASE=Tribe Computer Works Inc
@@ -5721,17 +5622,8 @@ acpi:PTL*:
 acpi:PTS*:
  ID_VENDOR_FROM_DATABASE=Plain Tree Systems Inc
 
-acpi:PTW*:
- ID_VENDOR_FROM_DATABASE=DO NOT USE - PTW
-
-acpi:PTX*:
- ID_VENDOR_FROM_DATABASE=Printronix LLC
-
 acpi:PUL*:
  ID_VENDOR_FROM_DATABASE=Pulse-Eight Ltd
-
-acpi:PVC*:
- ID_VENDOR_FROM_DATABASE=DO NOT USE - PVC
 
 acpi:PVG*:
  ID_VENDOR_FROM_DATABASE=Proview Global Co., Ltd
@@ -5879,9 +5771,6 @@ acpi:RCO*:
 
 acpi:RDI*:
  ID_VENDOR_FROM_DATABASE=Rainbow Displays, Inc.
-
-acpi:RDL*:
- ID_VENDOR_FROM_DATABASE=Riedel Communications Canada Inc.
 
 acpi:RDM*:
  ID_VENDOR_FROM_DATABASE=Tremon Enterprises Company Ltd
@@ -6126,9 +6015,6 @@ acpi:SBS*:
 acpi:SBT*:
  ID_VENDOR_FROM_DATABASE=Senseboard Technologies AB
 
-acpi:SCA*:
- ID_VENDOR_FROM_DATABASE=Schneider Consumer Group
-
 acpi:SCB*:
  ID_VENDOR_FROM_DATABASE=SeeCubic B.V.
 
@@ -6249,9 +6135,6 @@ acpi:SES*:
 acpi:SET*:
  ID_VENDOR_FROM_DATABASE=SendTek Corporation
 
-acpi:SFL*:
- ID_VENDOR_FROM_DATABASE=Shiftall Inc.
-
 acpi:SFM*:
  ID_VENDOR_FROM_DATABASE=TORNADO Company
 
@@ -6275,9 +6158,6 @@ acpi:SGL*:
 
 acpi:SGM*:
  ID_VENDOR_FROM_DATABASE=SAGEM
-
-acpi:SGN*:
- ID_VENDOR_FROM_DATABASE=Shenzhen Soogeen Electronics Co., LTD.
 
 acpi:SGO*:
  ID_VENDOR_FROM_DATABASE=Logos Design A/S
@@ -6534,9 +6414,6 @@ acpi:SPL*:
 acpi:SPN*:
  ID_VENDOR_FROM_DATABASE=Sapience Corporation
 
-acpi:SPO*:
- ID_VENDOR_FROM_DATABASE=SAMPO CORPORATION
-
 acpi:SPR*:
  ID_VENDOR_FROM_DATABASE=pmns GmbH
 
@@ -6581,9 +6458,6 @@ acpi:SSD*:
 
 acpi:SSE*:
  ID_VENDOR_FROM_DATABASE=Samsung Electronic Co.
-
-acpi:SSG*:
- ID_VENDOR_FROM_DATABASE=Steelseries ApS
 
 acpi:SSI*:
  ID_VENDOR_FROM_DATABASE=S-S Technology Inc
@@ -6662,9 +6536,6 @@ acpi:STT*:
 
 acpi:STU*:
  ID_VENDOR_FROM_DATABASE=Sentelic Corporation
-
-acpi:STV*:
- ID_VENDOR_FROM_DATABASE=Beijing Guochengwantong Information Technology Co., Ltd.
 
 acpi:STW*:
  ID_VENDOR_FROM_DATABASE=Starwin Inc.
@@ -7019,9 +6890,6 @@ acpi:TLX*:
 
 acpi:TLY*:
  ID_VENDOR_FROM_DATABASE=Truly Semiconductors Ltd.
-
-acpi:TMA*:
- ID_VENDOR_FROM_DATABASE=Tianma Microelectronics Ltd.
 
 acpi:TMC*:
  ID_VENDOR_FROM_DATABASE=Techmedia Computer Systems Corporation
@@ -7455,9 +7323,6 @@ acpi:VBT*:
 acpi:VCC*:
  ID_VENDOR_FROM_DATABASE=Virtual Computer Corporation
 
-acpi:VCE*:
- ID_VENDOR_FROM_DATABASE=VARCem
-
 acpi:VCI*:
  ID_VENDOR_FROM_DATABASE=VistaCom Inc
 
@@ -7568,9 +7433,6 @@ acpi:VMW*:
 
 acpi:VNC*:
  ID_VENDOR_FROM_DATABASE=Vinca Corporation
-
-acpi:VNX*:
- ID_VENDOR_FROM_DATABASE=Venetex Corporation
 
 acpi:VOB*:
  ID_VENDOR_FROM_DATABASE=MaxData Computer AG
@@ -7721,9 +7583,6 @@ acpi:WLD*:
 
 acpi:WLF*:
  ID_VENDOR_FROM_DATABASE=WOLF Advanced Technology
-
-acpi:WMI*:
- ID_VENDOR_FROM_DATABASE=Weidmuller Interface GmbH & Co. KG
 
 acpi:WML*:
  ID_VENDOR_FROM_DATABASE=Wolfson Microelectronics Ltd
